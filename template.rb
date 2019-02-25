@@ -77,6 +77,27 @@ def fix_stimulus_compression_issue
   git commit: %Q{ -m "Fix asset compressor issue with StimulusJS on production" }
 end
 
+def setup_stylesheets_plumbing
+  insert_into_file 'app/javascript/packs/application.js',
+                   "\n// Stylesheets\n",
+                   after: "console.log('Hello World from Webpacker')\n"
+  insert_into_file 'app/javascript/packs/application.js',
+                   "import 'stylesheets/application'\n",
+                   after: "// Stylesheets\n"
+  create_file 'app/javascript/stylesheets/application.scss', ''
+  insert_into_file 'app/views/layouts/application.html.erb',
+                   "    <%= stylesheet_pack_tag 'application' %>\n\n",
+                   before: /^(.+)stylesheet_link_tag(.+)$/
+end
+
+def install_tailwind_css
+  system 'yarn add tailwindcss'
+  system './node_modules/.bin/tailwind init app/javascript/stylesheets/tailwind.js'
+  append_to_file '.postcssrc.yml', "  tailwindcss: './app/javascript/stylesheets/tailwind.js'"
+  remove_file 'app/javascript/stylesheets/application.scss'
+  copy_file 'app/javascript/stylesheets/application.scss'
+end
+
 
 #==========================================================================
 # Main Setup Script
@@ -84,6 +105,7 @@ end
 
 add_template_repository_to_source_path
 add_gems
+
 # TODO: install all the gems
 
 after_bundle do
@@ -92,6 +114,8 @@ after_bundle do
   # setup_heroku_apps # FIXME: need to finish this method before uncommenting
   copy_example_readme
   fix_stimulus_compression_issue
-  # TODO: setup root route
+  setup_stylesheets_plumbing
+  install_tailwind_css
 
+  # TODO: setup root route
 end

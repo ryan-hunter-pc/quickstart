@@ -1,0 +1,18 @@
+@import "~tailwindcss/preflight";
+@import "~tailwindcss/components";
+
+/**
+ * Load custom components here, before Tailwind utilities
+ */
+// e.g.
+// @import "components/buttons";
+// @import "components/forms";
+
+@import "~tailwindcss/utilities";
+
+/**
+ * Load custom utilities here
+*/
+// e.g.
+// @import "utilities/background-patterns";
+// @import "utilities/skew-transforms";
