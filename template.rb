@@ -88,6 +88,8 @@ def setup_stylesheets_plumbing
   insert_into_file 'app/views/layouts/application.html.erb',
                    "    <%= stylesheet_pack_tag 'application' %>\n\n",
                    before: /^(.+)stylesheet_link_tag(.+)$/
+  git add: '.'
+  git commit: %Q{ -m "Setup stylesheets plumbing via webpacker" }
 end
 
 def install_tailwind_css
@@ -96,6 +98,19 @@ def install_tailwind_css
   append_to_file '.postcssrc.yml', "  tailwindcss: './app/javascript/stylesheets/tailwind.js'"
   remove_file 'app/javascript/stylesheets/application.scss'
   copy_file 'app/javascript/stylesheets/application.scss'
+  directory 'app/javascript/stylesheets/components'
+  git add: '.'
+  git commit: %Q{ -m "Install Tailwind CSS and some basic SCSS components" }
+end
+
+def add_visitor_root
+  copy_file 'app/controllers/visitors_controller.rb'
+  copy_file 'app/views/visitors/index.html.erb'
+  insert_into_file 'config/routes.rb',
+                   "  root to: 'visitors#index'",
+                   after: "Rails.application.routes.draw do\n"
+  git add: '.'
+  git commit: %Q{ -m "Setup root route to verify application configuration" }
 end
 
 
@@ -116,6 +131,7 @@ after_bundle do
   fix_stimulus_compression_issue
   setup_stylesheets_plumbing
   install_tailwind_css
+  add_visitor_root
 
   # TODO: setup root route
 end
