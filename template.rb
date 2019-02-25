@@ -77,6 +77,13 @@ def fix_stimulus_compression_issue
   git commit: %Q{ -m "Fix asset compressor issue with StimulusJS on production" }
 end
 
+def copy_procfiles
+  copy_file 'Procfile'
+  copy_file 'Procfile.dev'
+  git add: '.'
+  git commit: %Q{ -m "Setup Procfiles for development (Procfile.dev) and production (Procfile)" }
+end
+
 def setup_stylesheets_plumbing
   insert_into_file 'app/javascript/packs/application.js',
                    "\n// Stylesheets\n",
@@ -129,6 +136,7 @@ after_bundle do
   # setup_heroku_apps # FIXME: need to finish this method before uncommenting
   copy_example_readme
   fix_stimulus_compression_issue
+  copy_procfiles
   setup_stylesheets_plumbing
   install_tailwind_css
   add_visitor_root
