@@ -84,30 +84,35 @@ def copy_procfiles
   git commit: %Q{ -m "Setup Procfiles for development (Procfile.dev) and production (Procfile)" }
 end
 
-def setup_stylesheets_plumbing
-  insert_into_file 'app/javascript/packs/application.js',
-                   "\n// Stylesheets\n",
-                   after: "console.log('Hello World from Webpacker')\n"
-  insert_into_file 'app/javascript/packs/application.js',
-                   "import 'stylesheets/application'\n",
-                   after: "// Stylesheets\n"
-  create_file 'app/javascript/stylesheets/application.scss', ''
-  insert_into_file 'app/views/layouts/application.html.erb',
-                   "    <%= stylesheet_pack_tag 'application' %>\n\n",
-                   before: /^(.+)stylesheet_link_tag(.+)$/
+def install_ui_toolkit
+  install_tailwind_css
+  install_fontawesome
+  integrate_stylesheets_via_webpacker
   git add: '.'
-  git commit: %Q{ -m "Setup stylesheets plumbing via webpacker" }
+  git commit: %Q{ -m "Setup custom UI kit using Tailwind CSS and FontAwesome 5 via Webpacker" }
 end
 
 def install_tailwind_css
   system 'yarn add tailwindcss'
   system './node_modules/.bin/tailwind init app/javascript/stylesheets/tailwind.js'
   append_to_file '.postcssrc.yml', "  tailwindcss: './app/javascript/stylesheets/tailwind.js'"
-  remove_file 'app/javascript/stylesheets/application.scss'
-  copy_file 'app/javascript/stylesheets/application.scss'
-  directory 'app/javascript/stylesheets/components'
-  git add: '.'
-  git commit: %Q{ -m "Install Tailwind CSS and some basic SCSS components" }
+end
+
+def install_fontawesome
+  system 'yarn add @fortawesome/fontawesome-free'
+end
+
+def integrate_stylesheets_via_webpacker
+  insert_into_file 'app/javascript/packs/application.js',
+                   "\n// Stylesheets\n",
+                   after: "console.log('Hello World from Webpacker')\n"
+  insert_into_file 'app/javascript/packs/application.js',
+                   "import 'stylesheets/application'\n",
+                   after: "// Stylesheets\n"
+  insert_into_file 'app/views/layouts/application.html.erb',
+                   "    <%= stylesheet_pack_tag 'application' %>\n\n",
+                   before: /^(.+)stylesheet_link_tag(.+)$/
+  directory 'app/javascript/stylesheets'
 end
 
 def add_visitor_root
@@ -128,8 +133,6 @@ end
 add_template_repository_to_source_path
 add_gems
 
-# TODO: install all the gems
-
 after_bundle do
   initialize_git_repository
   update_setup_script
@@ -137,9 +140,6 @@ after_bundle do
   copy_example_readme
   fix_stimulus_compression_issue
   copy_procfiles
-  setup_stylesheets_plumbing
-  install_tailwind_css
+  install_ui_toolkit
   add_visitor_root
-
-  # TODO: setup root route
 end
