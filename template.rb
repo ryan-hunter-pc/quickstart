@@ -64,9 +64,17 @@ end
 
 def copy_example_readme
   remove_file 'README.md'
-  copy_file 'examples/README.md', 'README.md'
+  copy_file 'example/README.md', 'README.md'
   git add: '.'
   git commit: %Q{ -m "Update README" }
+end
+
+def fix_stimulus_compression_issue
+  gsub_file 'config/environments/production.rb',
+            'config.assets.js_compressor = :uglifier',
+            'config.assets.js_compressor = Uglifier.new(harmony: true)'
+  git add: '.'
+  git commit: %Q{ -m "Fix asset compressor issue with StimulusJS on production" }
 end
 
 
@@ -76,10 +84,14 @@ end
 
 add_template_repository_to_source_path
 add_gems
+# TODO: install all the gems
 
 after_bundle do
   initialize_git_repository
   update_setup_script
   # setup_heroku_apps # FIXME: need to finish this method before uncommenting
   copy_example_readme
+  fix_stimulus_compression_issue
+  # TODO: setup root route
+
 end
