@@ -1,0 +1,40 @@
+.form-input {
+  @apply w-full mb-6;
+}
+
+.form-label {
+  @apply block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2;
+}
+
+.form-control {
+  @apply appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 leading-tight;
+}
+
+.form-control:focus {
+  @apply outline-none bg-white border-grey;
+}
+
+.is-invalid {
+  @apply border-red;
+}
+
+.form-hint {
+  @apply text-blue text-xs italic;
+}
+
+.form-error {
+  @apply text-red text-xs italic;
+}
+
+.form-input .checkbox {
+  label {
+    @apply pl-2;
+  }
+
+  input[type=checkbox] {
+    -ms-transform: scale(1.125);
+    -moz-transform: scale(1.125);
+    -webkit-transform: scale(1.125);
+    -o-transform: scale(1.125);
+  }
+}
