@@ -38,3 +38,8 @@
     -o-transform: scale(1.125);
   }
 }
+
+/* Don't underline the "required" asterisk in forms */
+abbr[title] {
+  text-decoration: none;
+}

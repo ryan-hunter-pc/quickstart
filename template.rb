@@ -28,6 +28,7 @@ end
 def add_gems
   global_gems_to_add = <<~RUBY
     gem 'colorize'
+    gem 'simple_form'
   RUBY
   insert_into_file 'Gemfile', "\n\n#{global_gems_to_add.chomp}", after: /^(.+)bootsnap(.+)$/
 
@@ -175,6 +176,15 @@ def add_visitor_root
   git commit: %Q{ -m "Setup root route to verify application configuration" }
 end
 
+def integrate_javascript_via_webpacker
+  insert_into_file 'app/javascript/packs/application.js',
+                   "\n// Javascript Dependencies\n\n",
+                   after: "import 'stylesheets/application'\n"
+  insert_into_file 'app/views/layouts/application.html.erb',
+                   "\n\n    <%= javascript_pack_tag 'application' %>",
+                   after: /^(.+)javascript_include_tag(.+)$/
+end
+
 def install_stimulus
   system "rails webpacker:install:stimulus"
 
@@ -187,13 +197,15 @@ def install_stimulus
   git commit: %Q{ -m "Install StimulusJS" }
 end
 
-def integrate_javascript_via_webpacker
-  insert_into_file 'app/javascript/packs/application.js',
-                   "\n// Javascript Dependencies\n\n",
-                   after: "import 'stylesheets/application'\n"
-  insert_into_file 'app/views/layouts/application.html.erb',
-                   "\n\n    <%= javascript_pack_tag 'application' %>",
-                   after: /^(.+)javascript_include_tag(.+)$/
+def install_simple_form
+  system "bundle exec rails g simple_form:install"
+
+  # configure SimpleForm to use our custom Tailwind CSS components
+  remove_file 'config/initializers/simple_form.rb'
+  copy_file 'config/initializers/simple_form.rb'
+
+  git add: '.'
+  git commit: %Q{ -m "Install SimpleForm and configure it to use our Tailwind form styles" }
 end
 
 #==========================================================================
@@ -214,4 +226,5 @@ after_bundle do
   add_visitor_root
   integrate_javascript_via_webpacker
   install_stimulus
+  install_simple_form
 end
