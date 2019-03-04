@@ -69,14 +69,6 @@ def copy_example_readme
   git commit: %Q{ -m "Update README" }
 end
 
-def fix_stimulus_compression_issue
-  gsub_file 'config/environments/production.rb',
-            'config.assets.js_compressor = :uglifier',
-            'config.assets.js_compressor = Uglifier.new(harmony: true)'
-  git add: '.'
-  git commit: %Q{ -m "Fix asset compressor issue with StimulusJS on production" }
-end
-
 def copy_procfiles
   copy_file 'Procfile'
   copy_file 'Procfile.dev'
@@ -125,6 +117,26 @@ def add_visitor_root
   git commit: %Q{ -m "Setup root route to verify application configuration" }
 end
 
+def install_stimulus
+  system "rails webpacker:install:stimulus"
+
+  # fix asset compression issue with StimulusJS on Heroku
+  gsub_file 'config/environments/production.rb',
+            'config.assets.js_compressor = :uglifier',
+            'config.assets.js_compressor = Uglifier.new(harmony: true)'
+
+  git add: '.'
+  git commit: %Q{ -m "Install StimulusJS" }
+end
+
+def integrate_javascript_via_webpacker
+  insert_into_file 'app/javascript/packs/application.js',
+                   "\n// Javascript Dependencies\n\n",
+                   after: "import 'stylesheets/application'\n"
+  insert_into_file 'app/views/layouts/application.html.erb',
+                   "\n\n    <%= javascript_pack_tag 'application' %>",
+                   after: /^(.+)javascript_include_tag(.+)$/
+end
 
 #==========================================================================
 # Main Setup Script
@@ -135,11 +147,12 @@ add_gems
 
 after_bundle do
   initialize_git_repository
+  copy_procfiles
   update_setup_script
   # setup_heroku_apps # FIXME: need to finish this method before uncommenting
   copy_example_readme
-  fix_stimulus_compression_issue
-  copy_procfiles
   install_ui_toolkit
   add_visitor_root
+  integrate_javascript_via_webpacker
+  install_stimulus
 end
