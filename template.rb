@@ -143,7 +143,9 @@ end
 def install_tailwind_css
   system 'yarn add tailwindcss'
   system './node_modules/.bin/tailwind init app/javascript/stylesheets/tailwind.js'
-  append_to_file '.postcssrc.yml', "  tailwindcss: './app/javascript/stylesheets/tailwind.js'"
+  insert_into_file 'postcss.config.js',
+                   "    require('tailwindcss')('./app/javascript/stylesheets/tailwind.js'),\n",
+                   before: /^(.+)postcss-import(.+)$/
 end
 
 def install_fontawesome
