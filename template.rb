@@ -26,7 +26,41 @@ def add_template_repository_to_source_path
 end
 
 def add_gems
-  gem 'colorize'
+  global_gems_to_add = <<~RUBY
+    gem 'colorize'
+  RUBY
+  insert_into_file 'Gemfile', "\n\n#{global_gems_to_add.chomp}", after: /^(.+)bootsnap(.+)$/
+
+  dev_test_gems_to_add = <<-RUBY
+  gem 'rails-controller-testing'
+  gem 'rspec-rails', '~> 3.8'
+  gem 'factory_bot_rails'
+  gem 'pry-byebug'
+  gem 'pry-rails'
+  gem 'pry-stack_explorer'
+  gem 'timecop'
+  RUBY
+  gsub_file 'Gemfile', /^(.+)gem(.+)byebug(.+)$/, dev_test_gems_to_add.chomp
+
+  test_gems_group = <<~RUBY
+    group :test do
+      gem 'capybara'
+      gem 'chromedriver-helper'
+      gem 'database_cleaner'
+      gem 'selenium-webdriver'
+      gem 'shoulda-matchers'
+      gem 'simplecov', require: false
+    end
+  RUBY
+  insert_into_file 'Gemfile', "\n\n#{test_gems_group.chomp}", after: /^(.+)timecop(.+)$\s+end/
+
+  dev_gems_to_add = <<-RUBY
+  gem 'guard-rspec', require: false
+  gem 'rails_real_favicon'
+  gem 'spring-commands-rspec'
+  gem 'terminal-notifier-guard', require: false
+  RUBY
+  insert_into_file 'Gemfile', "\n#{dev_gems_to_add.chomp}", after: /^(.+)spring-watcher-listen(.+)$/
 end
 
 def initialize_git_repository
@@ -42,6 +76,42 @@ def update_setup_script
   comment_lines 'bin/setup', /rails restart/
   git add: '.'
   git commit: %Q{ -m "Update setup script" }
+end
+
+def copy_example_readme
+  remove_file 'README.md'
+  copy_file 'templates/README.md', 'README.md'
+  git add: '.'
+  git commit: %Q{ -m "Update README" }
+end
+
+def copy_procfiles
+  copy_file 'templates/Procfile', 'Procfile'
+  copy_file 'templates/Procfile.dev', 'Procfile.dev'
+  git add: '.'
+  git commit: %Q{ -m "Setup Procfiles for development (Procfile.dev) and production (Procfile)" }
+end
+
+def setup_test_suite
+  copy_spec_folder
+  copy_guardfile
+  disable_yarn_check_in_development
+  git add: '.'
+  git commit: %Q{ -m "Setup core TDD and debugging suite using RSpec, Capybara, Guard, and FactoryBot" }
+end
+
+def copy_guardfile
+  copy_file 'templates/Guardfile', 'Guardfile'
+end
+
+def copy_spec_folder
+  directory 'spec'
+end
+
+def disable_yarn_check_in_development
+  gsub_file 'config/environments/development.rb',
+            "config.webpacker.check_yarn_integrity = true",
+            "config.webpacker.check_yarn_integrity = false"
 end
 
 def setup_heroku_apps
@@ -60,20 +130,6 @@ def setup_heroku_apps
   RUBY
 
   insert_into_file "bin/setup", "\n#{heroku_setup_block}", after: "system!('bundle install')\n"
-end
-
-def copy_example_readme
-  remove_file 'README.md'
-  copy_file 'example/README.md', 'README.md'
-  git add: '.'
-  git commit: %Q{ -m "Update README" }
-end
-
-def copy_procfiles
-  copy_file 'Procfile'
-  copy_file 'Procfile.dev'
-  git add: '.'
-  git commit: %Q{ -m "Setup Procfiles for development (Procfile.dev) and production (Procfile)" }
 end
 
 def install_ui_toolkit
@@ -148,9 +204,10 @@ add_gems
 after_bundle do
   initialize_git_repository
   copy_procfiles
+  setup_test_suite
   update_setup_script
-  # setup_heroku_apps # FIXME: need to finish this method before uncommenting
   copy_example_readme
+  # setup_heroku_apps # FIXME: need to finish this method before uncommenting
   install_ui_toolkit
   add_visitor_root
   integrate_javascript_via_webpacker
