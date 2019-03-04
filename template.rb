@@ -37,7 +37,7 @@ end
 
 def update_setup_script
   gsub_file 'bin/setup', "# system('bin/yarn')", "system('yarn')"
-  gsub_file 'bin/setup', "system! 'bin/rails db:setup'", "system! 'bundle exec rails db:setup'"
+  gsub_file 'bin/setup', "system! 'bin/rails db:setup'", "system! 'bundle exec rails db:create db:migrate'"
   comment_lines 'bin/setup', /Restarting application server/
   comment_lines 'bin/setup', /rails restart/
   git add: '.'
