@@ -25,7 +25,7 @@ This template requires the following installed on your system:
 
 ### Create a new app
 
-    rails new myapp -T -d=postgresql --webpack=stimulus -m https://raw.githubusercontent.com/ryan-hunter-pc/jumpstart/master/template.rb
+    rails new myapp -T -d=postgresql --webpack -m https://raw.githubusercontent.com/ryan-hunter-pc/jumpstart/master/template.rb
     cd myapp
     
 ### Run the setup script to setup a local development environment
