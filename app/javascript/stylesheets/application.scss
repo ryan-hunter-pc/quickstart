@@ -1,11 +1,16 @@
 //=========================================================================
-// Tailwind CSS + custom components, etc
+// Theme (Tailwind CSS + custom components, etc)
 //=========================================================================
+// Core Tailwind CSS
 @import "~tailwindcss/preflight";
 @import "~tailwindcss/components";
-// Load custom components here, before Tailwind utilities
+
+// Custom components/styles (edit these to change "theme")
 @import "components/buttons";
+@import "components/links";
 @import "components/forms";
+@import "components/navigation";
+
 @import "~tailwindcss/utilities";
 // Load custom utilities here, e.g.
 // @import "utilities/background-patterns";

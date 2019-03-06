@@ -29,12 +29,14 @@ def add_gems
   global_gems_to_add = <<~RUBY
     gem 'colorize'
     gem 'simple_form'
+    gem 'clearance'
   RUBY
   insert_into_file 'Gemfile', "\n\n#{global_gems_to_add.chomp}", after: /^(.+)bootsnap(.+)$/
 
   dev_test_gems_to_add = <<-RUBY
   gem 'rails-controller-testing'
   gem 'rspec-rails', '~> 3.8'
+  gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'pry-byebug'
   gem 'pry-rails'
@@ -64,6 +66,10 @@ def add_gems
   insert_into_file 'Gemfile', "\n#{dev_gems_to_add.chomp}", after: /^(.+)spring-watcher-listen(.+)$/
 end
 
+def create_database
+  system "bundle exec rails db:create db:migrate"
+end
+
 def initialize_git_repository
   git :init
   git add: "."
@@ -80,8 +86,7 @@ def update_setup_script
 end
 
 def copy_example_readme
-  remove_file 'README.md'
-  copy_file 'templates/README.md', 'README.md'
+  replace_file 'templates/README.md', 'README.md'
   git add: '.'
   git commit: %Q{ -m "Update README" }
 end
@@ -151,6 +156,7 @@ end
 
 def install_fontawesome
   system 'yarn add @fortawesome/fontawesome-free'
+  copy_file 'app/helpers/font_awesome_helper.rb'
 end
 
 def integrate_stylesheets_via_webpacker
@@ -201,11 +207,60 @@ def install_simple_form
   system "bundle exec rails g simple_form:install"
 
   # configure SimpleForm to use our custom Tailwind CSS components
-  remove_file 'config/initializers/simple_form.rb'
-  copy_file 'config/initializers/simple_form.rb'
+  replace_file 'config/initializers/simple_form.rb'
 
   git add: '.'
   git commit: %Q{ -m "Install SimpleForm and configure it to use our Tailwind form styles" }
+end
+
+def configure_authentication
+  install_clearance
+  copy_authentication_views
+  git add: '.'
+  git commit: %Q{ -m "Implement basic user authentication using Clearance" }
+end
+
+def install_clearance
+  announce 'Installing Clearance'
+  system "bundle exec rails generate clearance:install"
+  system "bundle exec rails db:migrate"
+  system "bundle exec rails generate clearance:routes"
+  replace_file 'app/controllers/application_controller.rb'
+  copy_file 'app/controllers/passwords_controller.rb'
+  copy_file 'app/controllers/sessions_controller.rb'
+  copy_file 'app/controllers/users_controller.rb'
+  replace_file 'config/initializers/clearance.rb'
+end
+
+def copy_authentication_views
+  copy_file 'app/helpers/navigation_helper.rb'
+  replace_file 'app/views/layouts/application.html.erb'
+  copy_file 'app/views/layouts/_messages.html.erb'
+  copy_file 'app/views/layouts/_top_navigation.html.erb'
+  copy_file 'app/views/layouts/_sidebar_navigation.html.erb'
+  copy_file 'app/javascript/controllers/sidebar_controller.js'
+  copy_file 'app/helpers/button_helper.rb'
+  directory 'app/views/sessions'
+  directory 'app/views/users'
+  directory 'app/views/passwords'
+  directory 'app/views/clearance_mailer'
+end
+
+def copy_configuration_files
+  replace_file 'config/environments/development.rb'
+  copy_file 'templates/.env', '.env'
+  git add: '.'
+  git commit: %Q{ -m "Update application configuration" }
+end
+
+def announce(announcement)
+  puts "\n#{'=' * 76}\n#{announcement}\n#{'-' * 76}"
+end
+
+def replace_file(source, destination = nil)
+  destination = destination || source
+  remove_file destination
+  copy_file source, destination
 end
 
 #==========================================================================
@@ -216,6 +271,7 @@ add_template_repository_to_source_path
 add_gems
 
 after_bundle do
+  create_database
   initialize_git_repository
   copy_procfiles
   setup_test_suite
@@ -227,4 +283,6 @@ after_bundle do
   integrate_javascript_via_webpacker
   install_stimulus
   install_simple_form
+  configure_authentication
+  copy_configuration_files
 end

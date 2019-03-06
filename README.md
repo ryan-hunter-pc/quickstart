@@ -33,3 +33,9 @@ This template requires the following installed on your system:
 This can also be done on new machines after cloning the app (rather than generating it, like above).
 
     bin/setup
+
+### Required Environment Variables
+
+*DOMAIN* - The domain for use in email links that link back to your environment
+*COOKIE_DOMAIN* - This is only required in production, and MUST be omitted in development
+*MAILER_SENDER* - The default "from" address for transactional emails

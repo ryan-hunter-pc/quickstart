@@ -1,0 +1,7 @@
+.link {
+  @apply no-underline text-blue;
+
+  &:hover, &.active {
+    @apply underline text-blue-dark;
+  }
+}

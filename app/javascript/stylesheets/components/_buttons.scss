@@ -9,3 +9,11 @@
     @apply bg-blue-dark;
   }
 }
+
+.btn-warning {
+  @apply bg-yellow;
+
+  &:hover {
+    @apply bg-yellow-dark;
+  }
+}

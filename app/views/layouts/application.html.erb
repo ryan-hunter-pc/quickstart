@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= content_for(:title) || 'RH Productions' %></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_pack_tag 'application' %>
+
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'application' %>
+</head>
+<body class="font-sans">
+
+  <div id="wrapper"
+       class="loading"
+       data-controller="sidebar"
+       data-target="sidebar.bodyWrapper"
+       data-sidebar-show="<%= signed_in? %>">
+
+    <%= render 'layouts/top_navigation' %>
+
+    <header><%= render 'layouts/top_navigation' %></header>
+
+    <div id="sidebar-wrapper"
+         class="z-40 shadow-lg lg:shadow-none bg-grey-lighter"
+         data-target="sidebar.sidebarWrapper">
+      <%= render 'layouts/sidebar_navigation' %>
+    </div>
+
+    <main id="page-content-wrapper"
+          role="main"
+          data-target="sidebar.pageContentWrapper">
+      <%= render 'layouts/messages' %>
+      <%= yield %>
+    </main>
+
+  </div>
+
+</body>
+</html>

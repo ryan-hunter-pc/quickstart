@@ -1,0 +1,142 @@
+//=========================================================================
+// Top Navbar
+//=========================================================================
+
+$navbar-height: 50px;
+
+body {
+  padding-top: $navbar-height;
+}
+
+.navbar {
+  height: $navbar-height;
+  margin-top: -$navbar-height;
+  @apply fixed w-full z-50 flex items-center flex-wrap py-1;
+}
+
+.navbar-brand {
+  @apply flex items-center flex-no-shrink pl-2;
+}
+
+.navbar-link {
+  @apply no-underline text-blue block px-2;
+
+  &:hover {
+    @apply text-blue-darker;
+  }
+
+  &:focus {
+    @apply text-blue-darker;
+  }
+
+  &.active {
+    @apply text-blue-darker font-bold;
+  }
+}
+
+//=========================================================================
+// Sidebar
+//=========================================================================
+
+.sidebar-link {
+  @apply no-underline block py-2 text-blue;
+
+  &:hover {
+    @apply text-blue-darker;
+  }
+
+  &:focus {
+    @apply text-blue-darker;
+  }
+
+  &.active {
+    @apply text-blue-darker font-bold;
+  }
+}
+
+$sidebar-width: 200px;
+$mobile-sidebar-width: 60%;
+
+body {
+  overflow-x: hidden;
+}
+
+#wrapper {
+
+  #sidebar-wrapper {
+    @apply z-40;
+    position: fixed;
+    left: $sidebar-width;
+    width: 0;
+    height: 100%;
+    margin-left: -$sidebar-width;
+    overflow-y: auto;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+
+    #sidebar {
+      position: absolute;
+      top: 0;
+      width: $sidebar-width;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+
+  #page-content-wrapper {
+    width: 100%;
+    position: absolute;
+    padding-left: 0;
+
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+  }
+
+  // Don't animate if opening on page load
+  &.loading {
+    #sidebar-wrapper {
+      -webkit-transition: all 0s ease;
+      -moz-transition: all 0s ease;
+      -o-transition: all 0s ease;
+      transition: all 0s ease;
+    }
+
+    #page-content-wrapper {
+      -webkit-transition: all 0s ease;
+      -moz-transition: all 0s ease;
+      -o-transition: all 0s ease;
+      transition: all 0s ease;
+    }
+  }
+
+  &.toggled {
+    #sidebar-wrapper {
+      width: $mobile-sidebar-width;
+    }
+
+    #page-content-wrapper {
+      position: absolute;
+    }
+  }
+}
+
+@media(min-width:768px) {
+  #page-content-wrapper {
+    position: relative;
+  }
+
+  #wrapper.toggled #sidebar-wrapper {
+    width: $sidebar-width;
+  }
+
+  #wrapper.toggled #page-content-wrapper {
+    position: relative;
+    padding-left: $sidebar-width;
+    margin-right: 0;
+  }
+}
