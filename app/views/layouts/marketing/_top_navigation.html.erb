@@ -1,0 +1,26 @@
+<nav class="navbar bg-white shadow">
+  <div class="navbar-brand">
+    <%= link_to root_path, class: 'no-underline', data: { turbolinks: signed_in? } do %>
+      <%#= image_tag 'logo.png', alt: 'My Logo' %>
+      <span class="font-bold text-xl tracking-tight text-grey">Jumpstart</span>
+    <% end %>
+  </div>
+
+  <%# TODO: change this to be a collapsible nav menu, similar to the default Bootstrap navbar %>
+  <% if signed_in? %>
+    <button class="block ml-auto md:ml-6 py-2 px-4 rounded md:hover:bg-grey-lighter"
+            type="button"
+            data-target="sidebar.toggle"
+            data-action="sidebar#toggleSidebar"
+            aria-controls="sidebar"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+      <%= fa_icon 'bars', icon_class: 'fa-lg' %>
+    </button>
+  <% else %>
+    <%= navbar_link_to 'Sign In',
+                       sign_in_path,
+                       icon: 'sign-in-alt',
+                       class: 'navbar-link ml-auto' %>
+  <% end %>
+</nav>

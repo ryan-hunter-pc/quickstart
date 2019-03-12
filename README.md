@@ -36,6 +36,21 @@ This can also be done on new machines after cloning the app (rather than generat
 
 ### Required Environment Variables
 
-*DOMAIN* - The domain for use in email links that link back to your environment
-*COOKIE_DOMAIN* - This is only required in production, and MUST be omitted in development
-*MAILER_SENDER* - The default "from" address for transactional emails
+- `DOMAIN` - The domain for use in email links that link back to your environment
+- `COOKIE_DOMAIN` - This is only required in production, and **must be omitted in development**
+- `MAILER_SENDER` - The default "from" address for transactional emails
+
+### Static Pages
+
+To add static page(s), simply create a page view such as `app/views/pages/my_page.html.erb`,
+and it will automatically be wired up to the `/my_page` route.
+
+This functionality uses the [HighVoltage](https://github.com/thoughtbot/high_voltage) gem,
+configured for top-level routes via a `PagesController` which uses the view file as the `id` for the `show` action.
+
+---
+
+## TODO
+
+- `marketing` pack(s)? (`app/javascript/stylesheets/marketing.scss` and `app/javascript/packs/marketing.js`)
+- MoneyRails

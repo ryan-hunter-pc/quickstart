@@ -30,6 +30,7 @@ def add_gems
     gem 'colorize'
     gem 'simple_form'
     gem 'clearance'
+    gem 'high_voltage', '~> 3.1'
   RUBY
   insert_into_file 'Gemfile', "\n\n#{global_gems_to_add.chomp}", after: /^(.+)bootsnap(.+)$/
 
@@ -175,9 +176,10 @@ end
 def add_visitor_root
   copy_file 'app/controllers/visitors_controller.rb'
   copy_file 'app/views/visitors/index.html.erb'
-  insert_into_file 'config/routes.rb',
-                   "  root to: 'visitors#index'",
-                   after: "Rails.application.routes.draw do\n"
+  # no need to add route, we will copy a custom `config/routes.rb` file later
+  # insert_into_file 'config/routes.rb',
+  #                  "  root to: 'visitors#index'",
+  #                  after: "Rails.application.routes.draw do\n"
   git add: '.'
   git commit: %Q{ -m "Setup root route to verify application configuration" }
 end
@@ -224,7 +226,8 @@ def install_clearance
   announce 'Installing Clearance'
   system "bundle exec rails generate clearance:install"
   system "bundle exec rails db:migrate"
-  system "bundle exec rails generate clearance:routes"
+  # no need to generate routes -- they are included manually in a custom `config/routes.rb` file
+  # system "bundle exec rails generate clearance:routes"
   replace_file 'app/controllers/application_controller.rb'
   copy_file 'app/controllers/passwords_controller.rb'
   copy_file 'app/controllers/sessions_controller.rb'
@@ -247,10 +250,21 @@ def copy_authentication_views
 end
 
 def copy_configuration_files
+  replace_file 'config/routes.rb'
   replace_file 'config/environments/development.rb'
   copy_file 'templates/.env', '.env'
   git add: '.'
   git commit: %Q{ -m "Update application configuration" }
+end
+
+def configure_static_pages
+  directory 'app/views/pages'
+  copy_file 'config/initializers/high_voltage.rb'
+  copy_file 'app/controllers/pages_controller.rb'
+  copy_file 'app/views/layouts/marketing.html.erb'
+  directory 'app/views/layouts/marketing'
+  git add: '.'
+  git commit: %Q{ -m "Setup static/marketing pages via HighVoltage" }
 end
 
 def announce(announcement)
@@ -285,4 +299,5 @@ after_bundle do
   install_simple_form
   configure_authentication
   copy_configuration_files
+  configure_static_pages
 end

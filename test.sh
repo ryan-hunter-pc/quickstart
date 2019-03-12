@@ -9,7 +9,7 @@ if [ -d "./testapp" ]; then
   rm -rf testapp
 fi
 
-# generate test app with local copy of jumpstart
+# generate test app from local source
 rails new testapp -T -d=postgresql --webpack -m ./template.rb
 
 # setup and run development server (optional - comment out to skip)
@@ -18,9 +18,3 @@ bin/setup
 # bundle exec rspec -f d
 bundle exec rails db:migrate
 foreman start -f Procfile.dev
-
-
-# TODO
-
-# High Voltage
-# Money-Rails
