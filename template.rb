@@ -252,6 +252,7 @@ end
 def copy_configuration_files
   replace_file 'config/routes.rb'
   replace_file 'config/environments/development.rb'
+  replace_file 'config/environments/test.rb'
   copy_file 'templates/.env', '.env'
   git add: '.'
   git commit: %Q{ -m "Update application configuration" }

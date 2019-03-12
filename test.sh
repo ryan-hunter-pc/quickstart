@@ -12,9 +12,14 @@ fi
 # generate test app from local source
 rails new testapp -T -d=postgresql --webpack -m ./template.rb
 
-# setup and run development server (optional - comment out to skip)
+# setup and development server
 cd testapp
 bin/setup
-# bundle exec rspec -f d
 bundle exec rails db:migrate
+
+# run tests
+bundle exec rspec -f d
+
+# spin up dev server at http://localhost:5000
 foreman start -f Procfile.dev
+# bundle exec guard
