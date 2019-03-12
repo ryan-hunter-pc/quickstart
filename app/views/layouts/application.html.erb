@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= content_for(:title) || 'RH Productions' %></title>
+  <title><%= yield(:title) || 'RH Productions' %></title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
@@ -21,8 +21,6 @@
        data-controller="sidebar"
        data-target="sidebar.bodyWrapper"
        data-sidebar-show="<%= signed_in? %>">
-
-    <%= render 'layouts/top_navigation' %>
 
     <header><%= render 'layouts/top_navigation' %></header>
 

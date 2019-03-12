@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= yield(:title) || 'RH Productions' %></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_pack_tag 'application' %>
+
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_pack_tag 'application' %>
+</head>
+<body class="font-sans">
+
+  <header><%= render 'layouts/marketing/top_navigation' %></header>
+
+  <main role="main">
+    <%= render 'layouts/messages' %>
+    <%= yield %>
+  </main>
+
+</body>
+</html>
