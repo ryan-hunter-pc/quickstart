@@ -174,8 +174,8 @@ def integrate_stylesheets_via_webpacker
 end
 
 def add_visitor_root
-  copy_file 'app/controllers/visitors_controller.rb'
-  copy_file 'app/views/visitors/index.html.erb'
+  copy_file 'app/controllers/marketing_controller.rb'
+  copy_file 'app/views/marketing/index.html.erb'
   # no need to add route, we will copy a custom `config/routes.rb` file later
   # insert_into_file 'config/routes.rb',
   #                  "  root to: 'visitors#index'",
@@ -257,14 +257,22 @@ def copy_configuration_files
   git commit: %Q{ -m "Update application configuration" }
 end
 
+def extract_marketing_layout
+  copy_file 'app/views/layouts/marketing.html.erb'
+  directory 'app/views/layouts/marketing'
+  copy_file 'app/controllers/dashboards_controller.rb'
+  directory 'app/views/dashboards'
+  git add: '.'
+  git commit: %Q{ -m "Give marketing pages their own layout" }
+end
+
 def configure_static_pages
   directory 'app/views/pages'
   copy_file 'config/initializers/high_voltage.rb'
   copy_file 'app/controllers/pages_controller.rb'
-  copy_file 'app/views/layouts/marketing.html.erb'
-  directory 'app/views/layouts/marketing'
+  # this also depends on custom routes defined in `config/routes.rb`
   git add: '.'
-  git commit: %Q{ -m "Setup static/marketing pages via HighVoltage" }
+  git commit: %Q{ -m "Use HighVoltage for easy static pages using the marketing layout" }
 end
 
 def announce(announcement)
@@ -299,5 +307,6 @@ after_bundle do
   install_simple_form
   configure_authentication
   copy_configuration_files
+  extract_marketing_layout
   configure_static_pages
 end

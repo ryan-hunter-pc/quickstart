@@ -1,13 +1,21 @@
 Rails.application.routes.draw do
-  root to: 'visitors#index'
+  constraints Clearance::Constraints::SignedIn.new do
+    root to: redirect('/dashboard')
+  end
+
+  constraints Clearance::Constraints::SignedOut.new do
+    root to: 'marketing#index'
+  end
+
+  resource :dashboard, only: [:show]
 
   # Authentication
   resources :passwords, controller: "passwords", only: [:create, :new]
   resource :session, controller: "sessions", only: [:create]
   resources :users, controller: "users", only: [:create] do
     resource :password,
-      controller: "passwords",
-      only: [:create, :edit, :update]
+             controller: "passwords",
+             only: [:create, :edit, :update]
   end
   get "/sign_in" => "sessions#new", as: "sign_in"
   delete "/sign_out" => "sessions#destroy", as: "sign_out"
