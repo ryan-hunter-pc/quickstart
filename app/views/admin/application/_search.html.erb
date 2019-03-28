@@ -1,0 +1,25 @@
+<form class="search" role="search">
+  <div class="flex items-center bg-grey-lighter rounded">
+    <label class="search__label" for="search">
+      <%= fa_icon 'search', icon_class: 'fa-fw mx-2 text-grey' %>
+      <%# TODO: add title: t("administrate.search.label", resource: resource_name) to icon? %>
+    </label>
+
+    <input class="search__input bg-grey-lighter appearance-none border-2 border-grey-lighter
+                rounded w-full py-2 text-grey-darker leading-tight
+                focus:outline-none focus:bg-white focus:border-grey-lighter"
+           id="search"
+           type="text"
+           name="search"
+           placeholder="<%= t("administrate.search.label",
+                              resource: resource_name) %>"
+           value="<%= search_term %>"
+           autofocus>
+
+    <% if search_term.present? %>
+      <%= link_to clear_search_params, class: "search__clear-" do %>
+        <%= fa_icon 'times', icon_class: 'fa-fw mx-2' %>
+      <% end %>
+    <% end %>
+  </div>
+</form>

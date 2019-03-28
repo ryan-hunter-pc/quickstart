@@ -43,3 +43,44 @@
 abbr[title] {
   text-decoration: none;
 }
+
+.selectize-control {
+  @apply bg-grey-lighter border-0;
+  padding: 0;
+}
+
+.selectize-input,
+.selectize-input.full {
+  @apply bg-grey-lighter border-transparent shadow-none py-3 px-4 leading-tight text-base;
+  //padding: 0;
+}
+
+.selectize-input input {
+  @apply leading-tight text-base;
+}
+
+.selectize-input:focus,
+.selectize-input.full:focus,
+.selectize-input.input-active {
+  @apply outline-none bg-white border-grey;
+}
+
+.selectize-dropdown {
+  @apply bg-white p-0;
+}
+
+.selectize-dropdown-content {
+  @apply p-0;
+}
+
+.selectize-dropdown .option {
+  @apply py-2 px-4 leading-tight text-base bg-white cursor-pointer;
+
+  &.selected {
+    @apply bg-blue-lightest;
+  }
+
+  &.active {
+    @apply bg-blue-lightest;
+  }
+}

@@ -9,6 +9,12 @@ Rails.application.routes.draw do
 
   resource :dashboard, only: [:show]
 
+  namespace :admin do
+    resources :users, except: [:new, :destroy]
+
+    root to: "users#index"
+  end
+
   # Authentication
   resources :passwords, controller: "passwords", only: [:create, :new]
   resource :session, controller: "sessions", only: [:create]

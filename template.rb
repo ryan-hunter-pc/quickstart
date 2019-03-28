@@ -31,6 +31,7 @@ def add_gems
     gem 'simple_form'
     gem 'clearance'
     gem 'high_voltage', '~> 3.1'
+    gem 'administrate'
   RUBY
   insert_into_file 'Gemfile', "\n\n#{global_gems_to_add.chomp}", after: /^(.+)bootsnap(.+)$/
 
@@ -276,6 +277,33 @@ def configure_static_pages
   git commit: %Q{ -m "Use HighVoltage for easy static pages using the marketing layout" }
 end
 
+def install_administrate
+  system "bundle exec rails generate administrate:install"
+  # copy our custom overriding admin layout
+  replace_file 'app/controllers/admin/application_controller.rb'
+  directory 'app/views/layouts/admin'
+  directory 'app/views/admin/application'
+  directory 'app/views/fields'
+  replace_file 'app/dashboards/user_dashboard.rb'
+  git add: '.'
+  git commit: %Q{ -m "Install Administrate as an admin dashboard framework" }
+end
+
+def integrate_selectize
+  # install jQuery and expose as global module(s)
+  system "yarn add jquery"
+  replace_file 'config/webpack/environment.js'
+  # install selectize via yarn/webpacker
+  system "yarn add selectize"
+  insert_into_file 'app/javascript/packs/application.js',
+                   "import 'selectize/dist/js/selectize.js'\n",
+                   after: "// Javascript Dependencies\n"
+  # integrate selectize via StimulusJS
+  copy_file 'app/javascript/controllers/selectize_controller.js'
+  git add: '.'
+  git commit: %Q{ -m "Install and integrate selectize to handle rich select inputs" }
+end
+
 def announce(announcement)
   puts "\n#{'=' * 76}\n#{announcement}\n#{'-' * 76}"
 end
@@ -310,4 +338,6 @@ after_bundle do
   copy_configuration_files
   extract_marketing_layout
   configure_static_pages
+  install_administrate
+  integrate_selectize
 end

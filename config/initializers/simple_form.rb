@@ -84,8 +84,8 @@ SimpleForm.setup do |config|
     b.use :html5
     b.optional :readonly
     b.use :label, class: 'form-label'
-    b.wrapper tag: 'div', class: 'flex' do |ba|
-      ba.use :input, class: 'form-control', error_class: 'is-invalid'
+    b.wrapper tag: 'div', class: 'inline-flex items-center -mx-1' do |ba|
+      ba.use :input, class: 'form-control flex-auto mx-1', error_class: 'is-invalid'
       ba.use :error, wrap_with: { tag: :span, class: 'form-error' }
       ba.use :hint,  wrap_with: { tag: :span, class: 'form-hint' }
     end
@@ -168,6 +168,9 @@ SimpleForm.setup do |config|
   # type as key and the wrapper that will be used for all inputs with specified type.
   config.wrapper_mappings = {
     boolean: :vertical_boolean,
+    date: :multi_select,
+    datetime: :multi_select,
+    time: :multi_select,
   }
 
   # Namespaces where SimpleForm should look for custom input classes that
