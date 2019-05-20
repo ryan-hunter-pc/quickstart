@@ -15,22 +15,22 @@ body {
 }
 
 .navbar-brand {
-  @apply flex items-center flex-no-shrink pl-2;
+  @apply flex items-center flex-shrink-0 pl-2;
 }
 
 .navbar-link {
-  @apply no-underline text-blue block px-2;
+  @apply no-underline text-blue-500 block px-2;
 
   &:hover {
-    @apply text-blue-darker;
+    @apply text-blue-700;
   }
 
   &:focus {
-    @apply text-blue-darker;
+    @apply text-blue-800;
   }
 
   &.active {
-    @apply text-blue-darker font-bold;
+    @apply text-blue-800 font-bold;
   }
 }
 
@@ -39,18 +39,18 @@ body {
 //=========================================================================
 
 .sidebar-link {
-  @apply no-underline block py-2 text-blue;
+  @apply no-underline block py-2 text-blue-500;
 
   &:hover {
-    @apply text-blue-darker;
+    @apply text-blue-800;
   }
 
   &:focus {
-    @apply text-blue-darker;
+    @apply text-blue-800;
   }
 
   &.active {
-    @apply text-blue-darker font-bold;
+    @apply text-blue-800 font-bold;
   }
 }
 

@@ -7,33 +7,33 @@
 }
 
 .btn-primary {
-  @apply bg-blue text-white;
+  @apply bg-blue-500 text-white;
 
   &:hover {
-    @apply bg-blue-dark;
+    @apply bg-blue-700;
   }
 }
 
 .btn-warning {
-  @apply bg-yellow text-yellow-darker;
+  @apply bg-yellow-500 text-yellow-800;
 
   &:hover {
-    @apply bg-yellow-dark;
+    @apply bg-yellow-700;
   }
 }
 
 .btn-danger {
-  @apply bg-red text-white;
+  @apply bg-red-500 text-white;
 
   &:hover {
-    @apply bg-red-dark;
+    @apply bg-red-700;
   }
 }
 
-.btn-grey {
-  @apply bg-grey-lighter text-grey-darker;
+.btn-gray {
+  @apply bg-gray-300 text-gray-800;
 
   &:hover {
-    @apply bg-grey-light;
+    @apply bg-gray-400;
   }
 }

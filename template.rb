@@ -150,9 +150,9 @@ end
 
 def install_tailwind_css
   system 'yarn add tailwindcss'
-  system './node_modules/.bin/tailwind init app/javascript/stylesheets/tailwind.js'
+  # system './node_modules/.bin/tailwind init app/javascript/stylesheets/tailwind.js'
   insert_into_file 'postcss.config.js',
-                   "    require('tailwindcss')('./app/javascript/stylesheets/tailwind.js'),\n",
+                   "    require('tailwindcss'),\n    require('autoprefixer'),\n",
                    before: /^(.+)postcss-import(.+)$/
 end
 
@@ -187,7 +187,7 @@ end
 
 def integrate_javascript_via_webpacker
   insert_into_file 'app/javascript/packs/application.js',
-                   "\n// Javascript Dependencies\n\n",
+                   "\n// Javascript Dependencies\n",
                    after: "import 'stylesheets/application'\n"
   insert_into_file 'app/views/layouts/application.html.erb',
                    "\n\n    <%= javascript_pack_tag 'application' %>",

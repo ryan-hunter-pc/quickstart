@@ -1,23 +1,21 @@
 .link {
-  @apply no-underline;
-
   &:hover, &.active {
     @apply underline;
   }
 }
 
 .link-primary {
-  @apply text-blue;
+  @apply text-blue-500;
 
   &:hover, &.active {
-    @apply text-blue-dark;
+    @apply text-blue-600;
   }
 }
 
 .link-secondary {
-  @apply text-grey;
+  @apply text-gray-500;
 
   &:hover, &.active {
-    @apply text-grey-dark;
+    @apply text-gray-600;
   }
 }

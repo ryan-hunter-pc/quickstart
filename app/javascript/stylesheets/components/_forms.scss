@@ -3,27 +3,27 @@
 }
 
 .form-label {
-  @apply block uppercase tracking-wide text-grey-darker text-xs font-bold mb-2;
+  @apply block uppercase tracking-wide text-gray-800 text-xs font-bold mb-2;
 }
 
 .form-control {
-  @apply appearance-none block w-full bg-grey-lighter text-grey-darker border border-grey-lighter rounded py-3 px-4 leading-tight;
+  @apply appearance-none block w-full bg-gray-300 text-gray-800 border border-gray-300 rounded py-3 px-4 leading-tight;
 }
 
 .form-control:focus {
-  @apply outline-none bg-white border-grey;
+  @apply outline-none bg-white border-gray-500;
 }
 
 .is-invalid {
-  @apply border-red;
+  @apply border-red-500;
 }
 
 .form-hint {
-  @apply text-blue text-xs italic;
+  @apply text-blue-500 text-xs italic;
 }
 
 .form-error {
-  @apply text-red text-xs italic;
+  @apply text-red-500 text-xs italic;
 }
 
 .form-input .checkbox {
@@ -45,13 +45,13 @@ abbr[title] {
 }
 
 .selectize-control {
-  @apply bg-grey-lighter border-0;
+  @apply bg-gray-400 border-0;
   padding: 0;
 }
 
 .selectize-input,
 .selectize-input.full {
-  @apply bg-grey-lighter border-transparent shadow-none py-3 px-4 leading-tight text-base;
+  @apply bg-gray-400 border-transparent shadow-none py-3 px-4 leading-tight text-base;
   //padding: 0;
 }
 
@@ -62,7 +62,7 @@ abbr[title] {
 .selectize-input:focus,
 .selectize-input.full:focus,
 .selectize-input.input-active {
-  @apply outline-none bg-white border-grey;
+  @apply outline-none bg-white border-gray-500;
 }
 
 .selectize-dropdown {
@@ -77,10 +77,10 @@ abbr[title] {
   @apply py-2 px-4 leading-tight text-base bg-white cursor-pointer;
 
   &.selected {
-    @apply bg-blue-lightest;
+    @apply bg-blue-100;
   }
 
   &.active {
-    @apply bg-blue-lightest;
+    @apply bg-blue-100;
   }
 }

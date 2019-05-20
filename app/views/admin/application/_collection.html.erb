@@ -19,10 +19,10 @@ to display a collection of resources in an HTML table.
 %>
 
 <table aria-labelledby="<%= table_title %>" class="w-full">
-  <thead class="border-b-2 border-grey-lighter">
+  <thead class="border-b-2 border-gray-300">
     <tr>
       <% collection_presenter.attribute_types.each do |attr_name, attr_type| %>
-        <th class="link text-grey-dark hover:text-grey-darker text-left pb-2 px-2
+        <th class="link text-gray-700 hover:text-gray-800 text-left pb-2 px-2
                    cell-label
                    cell-label--<%= attr_type.html_class %>
                    cell-label--<%= collection_presenter.ordered_html_class(attr_name) %>"
@@ -53,7 +53,7 @@ to display a collection of resources in an HTML table.
 
   <tbody>
     <% resources.each do |resource| %>
-      <tr class="js-table-row hover:bg-grey-lighter"
+      <tr class="js-table-row hover:bg-gray-300"
           tabindex="0"
           <% if valid_action? :show, collection_presenter.resource_name %>
             <%= %(role=link data-url=#{polymorphic_path([namespace, resource])}) %>
