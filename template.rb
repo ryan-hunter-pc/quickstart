@@ -3,26 +3,9 @@ require "shellwords"
 
 # Copied from: https://github.com/excid3/jumpstart
 # Add this template directory to source_paths so that Thor actions like
-# copy_file and template resolve against our source files. If this file was
-# invoked remotely via HTTP, that means the files are not present locally.
-# In that case, use `git clone` to download them to a local temporary dir.
+# copy_file and template resolve against our source files.
 def add_template_repository_to_source_path
-  # if __FILE__ =~ %r{\Ahttps?://}
-  #   require "tmpdir"
-  #   source_paths.unshift(tempdir = Dir.mktmpdir("jumpstart-"))
-  #   at_exit { FileUtils.remove_entry(tempdir) }
-  #   git clone: [
-  #     "--quiet",
-  #     "https://github.com/ryan-hunter-pc/jumpstart.git",
-  #     tempdir
-  #   ].map(&:shellescape).join(" ")
-  #
-  #   if (branch = __FILE__[%r{jumpstart/(.+)/template.rb}, 1])
-  #     Dir.chdir(tempdir) { git checkout: branch }
-  #   end
-  # else
-    source_paths.unshift(File.dirname(__FILE__))
-  # end
+  source_paths.unshift(File.dirname(__FILE__))
 end
 
 def add_gems
@@ -313,6 +296,15 @@ def integrate_selectize
   git commit: %Q{ -m "Install and integrate selectize to handle rich select inputs" }
 end
 
+def integrate_choices_js
+  system "yarn add choices.js"
+  # integrate via StimulusJS
+  copy_file 'app/javascript/controllers/choices_controller.js'
+  copy_file 'app/inputs/choices_input.rb'
+  git add: '.'
+  git commit: %Q{ -m "Install and integrate choices.js to handle rich select inputs" }
+end
+
 def announce(announcement)
   puts "\n#{'=' * 76}\n#{announcement}\n#{'-' * 76}"
 end
@@ -347,5 +339,5 @@ after_bundle do
   extract_marketing_layout
   configure_static_pages
   install_administrate
-  # integrate_selectize
+  integrate_choices_js
 end

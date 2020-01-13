@@ -14,12 +14,10 @@ rails new testapp -T -d=postgresql -m ./template.rb
 
 # setup and development server
 cd testapp
-#bundle exec rails db:migrate
 bin/setup
 
 # run tests
 bundle exec rspec -f d
 
 # spin up dev server at http://localhost:5000
-#foreman start -f Procfile.dev
-# bundle exec guard
+foreman start -f Procfile.dev
