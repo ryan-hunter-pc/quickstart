@@ -24,8 +24,8 @@ This template requires the following installed on your system:
 ## Usage
 
 ### Create a new app
-
-    rails new myapp -T -d=postgresql --webpack -m https://raw.githubusercontent.com/ryan-hunter-pc/jumpstart/master/template.rb
+    git clone git@github.com:ryan-hunter-pc/jumpstart.git
+    rails new myapp -T -d=postgresql -m ./jumpstart/template.rb
     cd myapp
     
 ### Run the setup script to setup a local development environment

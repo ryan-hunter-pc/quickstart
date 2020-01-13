@@ -10,16 +10,16 @@ if [ -d "./testapp" ]; then
 fi
 
 # generate test app from local source
-rails new testapp -T -d=postgresql --webpack -m ./template.rb
+rails new testapp -T -d=postgresql -m ./template.rb
 
 # setup and development server
 cd testapp
+#bundle exec rails db:migrate
 bin/setup
-bundle exec rails db:migrate
 
 # run tests
 bundle exec rspec -f d
 
 # spin up dev server at http://localhost:5000
-foreman start -f Procfile.dev
+#foreman start -f Procfile.dev
 # bundle exec guard

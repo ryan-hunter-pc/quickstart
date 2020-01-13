@@ -1,7 +1,6 @@
 require "rails_helper"
-require "support/features/clearance_helpers"
 
-RSpec.feature "Visitor signs in" do
+RSpec.describe "Visitor signs in" do
   scenario "with valid email and password" do
     create_user "user@example.com", "password"
     sign_in_with "user@example.com", "password"

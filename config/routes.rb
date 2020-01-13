@@ -1,18 +1,10 @@
 Rails.application.routes.draw do
-  constraints Clearance::Constraints::SignedIn.new do
-    root to: redirect('/dashboard')
-  end
-
-  constraints Clearance::Constraints::SignedOut.new do
-    root to: 'marketing#index'
-  end
+  root to: 'marketing#index'
 
   resource :dashboard, only: [:show]
 
   namespace :admin do
     resources :users, except: [:new, :destroy]
-
-    root to: "users#index"
   end
 
   # Authentication

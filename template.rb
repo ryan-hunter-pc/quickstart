@@ -7,25 +7,29 @@ require "shellwords"
 # invoked remotely via HTTP, that means the files are not present locally.
 # In that case, use `git clone` to download them to a local temporary dir.
 def add_template_repository_to_source_path
-  if __FILE__ =~ %r{\Ahttps?://}
-    require "tmpdir"
-    source_paths.unshift(tempdir = Dir.mktmpdir("jumpstart-"))
-    at_exit { FileUtils.remove_entry(tempdir) }
-    git clone: [
-      "--quiet",
-      "https://github.com/ryan-hunter-pc/jumpstart.git",
-      tempdir
-    ].map(&:shellescape).join(" ")
-
-    if (branch = __FILE__[%r{jumpstart/(.+)/template.rb}, 1])
-      Dir.chdir(tempdir) { git checkout: branch }
-    end
-  else
+  # if __FILE__ =~ %r{\Ahttps?://}
+  #   require "tmpdir"
+  #   source_paths.unshift(tempdir = Dir.mktmpdir("jumpstart-"))
+  #   at_exit { FileUtils.remove_entry(tempdir) }
+  #   git clone: [
+  #     "--quiet",
+  #     "https://github.com/ryan-hunter-pc/jumpstart.git",
+  #     tempdir
+  #   ].map(&:shellescape).join(" ")
+  #
+  #   if (branch = __FILE__[%r{jumpstart/(.+)/template.rb}, 1])
+  #     Dir.chdir(tempdir) { git checkout: branch }
+  #   end
+  # else
     source_paths.unshift(File.dirname(__FILE__))
-  end
+  # end
 end
 
 def add_gems
+  replace_file 'templates/Gemfile', 'Gemfile'
+end
+
+def add_gems_old
   global_gems_to_add = <<~RUBY
     gem 'colorize'
     gem 'simple_form'
@@ -80,7 +84,7 @@ end
 
 def update_setup_script
   gsub_file 'bin/setup', "# system('bin/yarn')", "system('yarn')"
-  gsub_file 'bin/setup', "system! 'bin/rails db:setup'", "system! 'bundle exec rails db:create db:migrate'"
+  gsub_file 'bin/setup', "system! 'bin/rails db:prepare'", "system! 'bundle exec rails db:prepare'"
   comment_lines 'bin/setup', /Restarting application server/
   comment_lines 'bin/setup', /rails restart/
   git add: '.'
@@ -100,10 +104,16 @@ def copy_procfiles
   git commit: %Q{ -m "Setup Procfiles for development (Procfile.dev) and production (Procfile)" }
 end
 
+
+#==============================================================================
+# Setup Test Suite
+#------------------------------------------------------------------------------
+
 def setup_test_suite
+  system "bundle exec rails g rspec:install"
   copy_spec_folder
   copy_guardfile
-  disable_yarn_check_in_development
+  # disable_yarn_check_in_development
   git add: '.'
   git commit: %Q{ -m "Setup core TDD and debugging suite using RSpec, Capybara, Guard, and FactoryBot" }
 end
@@ -113,6 +123,8 @@ def copy_guardfile
 end
 
 def copy_spec_folder
+  remove_file 'spec/rails_helper.rb'
+  remove_file 'spec/spec_helper.rb'
   directory 'spec'
 end
 
@@ -121,6 +133,11 @@ def disable_yarn_check_in_development
             "config.webpacker.check_yarn_integrity = true",
             "config.webpacker.check_yarn_integrity = false"
 end
+
+
+#==============================================================================
+# Setup Heroku Apps
+#------------------------------------------------------------------------------
 
 def setup_heroku_apps
   return unless yes?('Would you like to create Heroku staging and production applications now?')
@@ -164,7 +181,7 @@ end
 def integrate_stylesheets_via_webpacker
   insert_into_file 'app/javascript/packs/application.js',
                    "\n// Stylesheets\n",
-                   after: "console.log('Hello World from Webpacker')\n"
+                   after: "import \"controllers\"\n"
   insert_into_file 'app/javascript/packs/application.js',
                    "import 'stylesheets/application'\n",
                    after: "// Stylesheets\n"
@@ -177,21 +194,8 @@ end
 def add_visitor_root
   copy_file 'app/controllers/marketing_controller.rb'
   copy_file 'app/views/marketing/index.html.erb'
-  # no need to add route, we will copy a custom `config/routes.rb` file later
-  # insert_into_file 'config/routes.rb',
-  #                  "  root to: 'visitors#index'",
-  #                  after: "Rails.application.routes.draw do\n"
   git add: '.'
   git commit: %Q{ -m "Setup root route to verify application configuration" }
-end
-
-def integrate_javascript_via_webpacker
-  insert_into_file 'app/javascript/packs/application.js',
-                   "\n// Javascript Dependencies\n",
-                   after: "import 'stylesheets/application'\n"
-  insert_into_file 'app/views/layouts/application.html.erb',
-                   "\n\n    <%= javascript_pack_tag 'application' %>",
-                   after: /^(.+)javascript_include_tag(.+)$/
 end
 
 def install_stimulus
@@ -215,6 +219,11 @@ def install_simple_form
   git add: '.'
   git commit: %Q{ -m "Install SimpleForm and configure it to use our Tailwind form styles" }
 end
+
+
+#==============================================================================
+# Configure Authentication
+#------------------------------------------------------------------------------
 
 def configure_authentication
   install_clearance
@@ -329,15 +338,14 @@ after_bundle do
   update_setup_script
   copy_example_readme
   # setup_heroku_apps # FIXME: need to finish this method before uncommenting
+  install_stimulus
   install_ui_toolkit
   add_visitor_root
-  integrate_javascript_via_webpacker
-  install_stimulus
   install_simple_form
   configure_authentication
   copy_configuration_files
   extract_marketing_layout
   configure_static_pages
   install_administrate
-  integrate_selectize
+  # integrate_selectize
 end
