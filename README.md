@@ -4,20 +4,17 @@ This is a Rails application template, intended to be used with `rails new`,
 according to the recommendations documented in the
 [Rails Guides](https://guides.rubyonrails.org/rails_application_templates.html).
 
-It assumes the specific tools and stack used by RH Productions,
-and asks the user yes/no for optional modules.
+It assumes and installs the specific tools and configuration used by RH Productions.
 
 This was inspired by Chris Oliver's [jumpstart](https://github.com/excid3/jumpstart).
-I originally forked from that, then decided to start over from scratch because
-I planned to rewrite most of the template, and just use Chris's patterns for inspiration.
 
 ## Requirements
 
 This template requires the following installed on your system:
 
-- Ruby 2.5+
+- Ruby 2.6.5
 - Bundler `gem install bundler`
-- Rails 5.2 `gem install rails`
+- Rails 6.0.2 `gem install rails`
 - Postgresql 9.5+
 - Yarn - `brew install yarn` or [Install Yarn](https://yarnpkg.com/en/docs/install#debian-stable)
 
