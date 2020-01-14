@@ -27,11 +27,8 @@
 }
 
 .form-input .checkbox {
-  label {
-    @apply pl-2;
-  }
-
   input[type=checkbox] {
+    @apply mr-2;
     -ms-transform: scale(1.125);
     -moz-transform: scale(1.125);
     -webkit-transform: scale(1.125);
@@ -42,45 +39,4 @@
 /* Don't underline the "required" asterisk in forms */
 abbr[title] {
   text-decoration: none;
-}
-
-.selectize-control {
-  @apply bg-gray-400 border-0;
-  padding: 0;
-}
-
-.selectize-input,
-.selectize-input.full {
-  @apply bg-gray-400 border-transparent shadow-none py-3 px-4 leading-tight text-base;
-  //padding: 0;
-}
-
-.selectize-input input {
-  @apply leading-tight text-base;
-}
-
-.selectize-input:focus,
-.selectize-input.full:focus,
-.selectize-input.input-active {
-  @apply outline-none bg-white border-gray-500;
-}
-
-.selectize-dropdown {
-  @apply bg-white p-0;
-}
-
-.selectize-dropdown-content {
-  @apply p-0;
-}
-
-.selectize-dropdown .option {
-  @apply py-2 px-4 leading-tight text-base bg-white cursor-pointer;
-
-  &.selected {
-    @apply bg-blue-100;
-  }
-
-  &.active {
-    @apply bg-blue-100;
-  }
 }

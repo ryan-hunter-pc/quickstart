@@ -1,13 +1,6 @@
-<nav class="navbar bg-white shadow">
-  <div class="navbar-brand">
-    <%= link_to root_path, class: 'no-underline', data: { turbolinks: false } do %>
-      <%#= image_tag 'logo.png', alt: 'My Logo' %>
-      <span class="font-bold text-xl tracking-tight text-gray-700">Jumpstart</span>
-    <% end %>
-  </div>
-
-  <% if signed_in? %>
-    <button class="block ml-auto md:ml-6 py-2 px-4 rounded md:hover:bg-gray-200"
+<nav id="top-navigation" class="w-full z-50 bg-gray-700 flex items-center justify-between py-1">
+  <div class="left-buttons flex-1">
+    <button class="py-2 px-4 rounded text-gray-500 hover:text-gray-300"
             type="button"
             data-target="sidebar.toggle"
             data-action="sidebar#toggleSidebar"
@@ -16,10 +9,13 @@
             aria-label="Toggle navigation">
       <%= fa_icon 'bars', icon_class: 'fa-lg' %>
     </button>
-  <% else %>
-    <%= navbar_link_to 'Sign In',
-                       sign_in_path,
-                       icon: 'sign-in-alt',
-                       class: 'navbar-link ml-auto' %>
-  <% end %>
+  </div>
+
+  <div class="navbar-brand flex-1">
+    <%= link_to root_path, class: 'no-underline', data: { turbolinks: false } do %>
+      <h1 class="font-bold text-xl text-center tracking-tight text-gray-300">Jumpstart</h1>
+    <% end %>
+  </div>
+
+  <div class="right-buttons flex-1"></div>
 </nav>

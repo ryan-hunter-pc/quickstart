@@ -1,9 +1,10 @@
 import { Controller } from "stimulus"
 
 export default class extends Controller {
-    static targets = [ 'bodyWrapper', 'sidebarWrapper', 'pageContentWrapper', 'toggle' ]
+    static targets = [ 'screenWrapper', 'sidebarWrapper', 'mainWrapper', 'toggle' ]
 
     connect() {
+        console.log("Sidebar connected")
         if (this.data.get('show') === 'true' && window.innerWidth > 992) {
             this.showSidebar()
         } else {
@@ -14,19 +15,20 @@ export default class extends Controller {
     }
 
     toggleSidebar(event) {
+        console.log("Sidebar toggled")
         event.preventDefault()
-        this.bodyWrapperTarget.classList.toggle('toggled')
+        this.screenWrapperTarget.classList.toggle('toggled')
     }
 
     showSidebar() {
-        this.bodyWrapperTarget.classList.add('toggled')
+        this.screenWrapperTarget.classList.add('toggled')
     }
 
     hideSidebar() {
-        this.bodyWrapperTarget.classList.remove('toggled')
+        this.screenWrapperTarget.classList.remove('toggled')
     }
 
     setAsDoneLoading() {
-        this.bodyWrapperTarget.classList.remove('loading')
+        this.screenWrapperTarget.classList.remove('loading')
     }
 }

@@ -12,10 +12,34 @@
   }
 }
 
-.link-secondary {
+.link-secondary, .link-muted {
   @apply text-gray-500;
 
   &:hover, &.active {
     @apply text-gray-600;
+  }
+}
+
+.link-success {
+  @apply text-green-500;
+
+  &:hover, &.active {
+    @apply text-green-600;
+  }
+}
+
+.link-warning {
+  @apply text-yellow-700;
+
+  &:hover, &.active {
+    @apply text-yellow-800;
+  }
+}
+
+.link-danger {
+  @apply text-red-500;
+
+  &:hover, &.active {
+    @apply text-red-600;
   }
 }

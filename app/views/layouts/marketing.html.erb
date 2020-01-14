@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title><%= yield(:title) || 'RH Productions' %></title>
+  <title>Jumpstart</title>
   <%= csrf_meta_tags %>
   <%= csp_meta_tag %>
 
@@ -9,18 +9,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <%= stylesheet_pack_tag 'application' %>
+  <%= stylesheet_pack_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
 
-  <%= javascript_pack_tag 'application' %>
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
 </head>
-<body class="font-sans">
 
-  <header><%= render 'layouts/marketing/top_navigation' %></header>
+<body class="font-sans min-h-screen bg-gray-300">
+<header>
+  <%= render 'layouts/messages' %>
+  <div class="h-64 bg-gray-700">
+    <h1 class="pt-12 text-center text-4xl sm:text-6xl uppercase tracking-wide text-gray-500">
+      <%= link_to 'Jumpstart', root_path %>
+    </h1>
+  </div>
+</header>
 
-  <main role="main">
-    <%= render 'layouts/messages' %>
-    <%= yield %>
-  </main>
+<main role="main" class="max-w-5xl mx-2 lg:mx-auto -mt-12 bg-white rounded shadow-lg p-6">
+  <%= yield %>
+</main>
 
+<footer>
+  <div class="max-w-5xl mx-auto flex items-center justify-between px-4">
+    <p class="text-center pt-4">&copy;Copyright 2020<%= "-#{Date.current.year}" if Date.current.year > 2020 %></p>
+    <% if signed_in? %>
+      <%= link_to 'Sign out', sign_out_path, method: :delete, class: 'link link-gray' %>
+    <% else %>
+      <% if current_page?(sign_in_path) %>
+        <%= link_to 'Back to Home Page', root_path, class: 'link link-gray' %>
+      <% else %>
+        <%= link_to 'Sign In', sign_in_path, class: 'link link-gray' %>
+      <% end %>
+    <% end %>
+  </div>
+</footer>
 </body>
 </html>

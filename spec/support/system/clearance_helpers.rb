@@ -36,7 +36,7 @@ module SystemSpecHelpers
     end
 
     def expect_user_to_be_signed_out
-      expect(page).to have_content 'Sign In'
+      expect(page).to have_content 'Sign in'
     end
 
     def user_with_reset_password

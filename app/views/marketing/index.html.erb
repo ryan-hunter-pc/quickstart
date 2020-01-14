@@ -1,15 +1,10 @@
-<div class="w-screen h-screen pt-6 bg-gray-200">
-  <section class="container mx-auto rounded p-6 bg-white shadow-md">
+<section class="text-center">
+  <h2 class="text-2xl">Welcome to the RH Productions Jumpstart App</h2>
 
-    <h1 class="text-2xl mb-4">Welcome to the RH Productions Jumpstart App</h1>
+  <p class="mt-4">If the button below is blue, that means Tailwind CSS is working.</p>
+  <p class="mt-2">If it includes a hand icon, that means FontAwesome is working.</p>
 
-    <p class="mb-2">If the button below is blue, that means Tailwind CSS is working.</p>
-    <p class="mb-2">If it includes a hand icon, that means FontAwesome is working.</p>
-
-    <button class="btn btn-primary mb-2">
-      <i class="fas fa-hand-point-up mr-1"></i>
-      <span>Press Me</span>
-    </button>
-
-  </section>
-</div>
+  <button class="btn btn-primary mt-4 mb-2">
+    <%= fa_icon 'hand-point-up', text: 'Press Me' %>
+  </button>
+</section>

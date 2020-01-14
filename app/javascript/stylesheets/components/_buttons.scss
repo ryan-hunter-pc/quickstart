@@ -6,11 +6,31 @@
   @apply no-underline text-sm py-1 px-2 rounded;
 }
 
+.btn-lg {
+  @apply no-underline text-lg py-3 px-5 rounded;
+}
+
 .btn-primary {
   @apply bg-blue-500 text-white;
 
   &:hover {
     @apply bg-blue-700;
+  }
+}
+
+.btn-gray, .btn-secondary {
+  @apply bg-gray-300 text-gray-800;
+
+  &:hover {
+    @apply bg-gray-400;
+  }
+}
+
+.btn-success {
+  @apply bg-green-500 text-white;
+
+  &:hover {
+    @apply bg-green-700;
   }
 }
 
@@ -27,13 +47,5 @@
 
   &:hover {
     @apply bg-red-700;
-  }
-}
-
-.btn-gray {
-  @apply bg-gray-300 text-gray-800;
-
-  &:hover {
-    @apply bg-gray-400;
   }
 }

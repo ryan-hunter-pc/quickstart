@@ -231,6 +231,8 @@ end
 def copy_authentication_views
   copy_file 'app/helpers/navigation_helper.rb'
   replace_file 'app/views/layouts/application.html.erb'
+  copy_file 'app/views/layouts/authentication.html.erb'
+  directory 'app/views/layouts/authentication'
   copy_file 'app/views/layouts/_messages.html.erb'
   copy_file 'app/views/layouts/_top_navigation.html.erb'
   copy_file 'app/views/layouts/_sidebar_navigation.html.erb'
@@ -253,7 +255,6 @@ end
 
 def extract_marketing_layout
   copy_file 'app/views/layouts/marketing.html.erb'
-  directory 'app/views/layouts/marketing'
   copy_file 'app/controllers/dashboards_controller.rb'
   directory 'app/views/dashboards'
   git add: '.'

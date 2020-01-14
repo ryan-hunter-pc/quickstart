@@ -1,15 +1,22 @@
-<div class="w-screen h-screen pt-6 bg-gray-300">
-  <section class="container mx-auto rounded p-6 bg-white shadow-md">
+<%= content_for :title, 'Dashboard' %>
 
-    <h1 class="text-2xl mb-4">Dashboard</h1>
+<section id="dashboard" class="">
+  <div class="mx-auto md:max-w-xl">
+    <div id="welcome-card" class="mt-8 bg-white shadow-lg rounded mx-2">
+      <p class="text-lg text-center p-4">Welcome to Jumpstart</p>
 
-    <p class="mb-2">If the button below is blue, that means Tailwind CSS is working.</p>
-    <p class="mb-2">If it includes a hand icon, that means FontAwesome is working.</p>
-
-    <button class="btn btn-primary mb-2">
-      <i class="fas fa-hand-point-up mr-1"></i>
-      <span>Press Me</span>
-    </button>
-
-  </section>
-</div>
+      <div class="buttons py-4 px-4">
+        <%= link_to fa_icon('chevron-right', text: 'Get Started', icon_class: 'fa-fw'),
+                    '#',
+                    class: 'btn btn-lg btn-primary block w-full mt-2' %>
+        <%= link_to fa_icon('users-cog', text: 'Manage Users', icon_class: 'fa-fw'),
+                    admin_users_path,
+                    class: 'btn btn-lg btn-gray block w-full mt-2' %>
+        <%= link_to fa_icon('sign-out-alt', text: 'Sign Out', icon_class: 'fa-fw'),
+                    sign_out_path,
+                    method: :delete,
+                    class: 'btn btn-lg btn-gray block w-full mt-2' %>
+      </div>
+    </div>
+  </div>
+</section>

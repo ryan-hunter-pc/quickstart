@@ -11,9 +11,10 @@
 @import "~tailwindcss/components";
 
 // Custom components/styles (edit these to change "theme")
+@import "components/badges";
 @import "components/buttons";
-@import "components/links";
 @import "components/forms";
+@import "components/links";
 @import "components/navigation";
 
 @import "~tailwindcss/utilities";

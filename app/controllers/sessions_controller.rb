@@ -1,4 +1,3 @@
 class SessionsController < Clearance::SessionsController
-  # To override actions in this controller, see the default behavior:
-  # https://github.com/thoughtbot/clearance/blob/master/app/controllers/clearance/sessions_controller.rb
+  layout 'authentication'
 end
