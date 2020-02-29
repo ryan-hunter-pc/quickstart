@@ -38,6 +38,7 @@ group :development, :test do
   gem 'pry-byebug'
   gem 'pry-stack_explorer'
   gem 'timecop'
+  gem 'faker'
 end
 
 group :development do
