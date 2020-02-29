@@ -306,6 +306,13 @@ def integrate_choices_js
   git commit: %Q{ -m "Install and integrate choices.js to handle rich select inputs" }
 end
 
+def copy_gitignore
+  replace_file 'templates/.gitignore', '.gitignore'
+  git add: '.'
+  git commit: %Q{ -m "Ignore RSpec examples file and jetbrains config files" }
+
+end
+
 def announce(announcement)
   puts "\n#{'=' * 76}\n#{announcement}\n#{'-' * 76}"
 end
@@ -341,4 +348,5 @@ after_bundle do
   configure_static_pages
   install_administrate
   integrate_choices_js
+  copy_gitignore
 end
