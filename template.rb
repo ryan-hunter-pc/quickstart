@@ -62,7 +62,7 @@ end
 def initialize_git_repository
   git :init
   git add: "."
-  git commit: %Q{ -m 'Generate and bundle rails app using ryan-hunter-pc/jumpstart' }
+  git commit: %Q{ -m 'Generate and bundle rails app using ryan-hunter-pc/quickstart' }
 end
 
 def update_setup_script

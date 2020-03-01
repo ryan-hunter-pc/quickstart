@@ -1,7 +1,7 @@
 # Rails Application
 
 This is a newly generated Rails application using
-[RH Productions' Jumpstart](https://github.com/ryan-hunter-pc/jumpstart)
+[RH Productions' Quickstart](https://github.com/ryan-hunter-pc/quickstart)
 
 **You'll want to edit this README to document the specific application this will become.**
 

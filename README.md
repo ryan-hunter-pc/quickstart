@@ -6,8 +6,6 @@ according to the recommendations documented in the
 
 It assumes and installs the specific tools and configuration used by RH Productions.
 
-This was inspired by Chris Oliver's [jumpstart](https://github.com/excid3/jumpstart).
-
 ## Requirements
 
 This template requires the following installed on your system:
@@ -21,8 +19,8 @@ This template requires the following installed on your system:
 ## Usage
 
 ### Create a new app
-    git clone git@github.com:ryan-hunter-pc/jumpstart.git
-    rails new myapp -T -d=postgresql -m ./jumpstart/template.rb
+    git clone git@github.com:ryan-hunter-pc/quickstart.git
+    rails new myapp -T -d=postgresql -m ./quickstart/template.rb
     cd myapp
     
 ### Run the setup script to setup a local development environment
