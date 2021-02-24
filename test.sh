@@ -10,14 +10,14 @@ if [ -d "./testapp" ]; then
 fi
 
 # generate test app from local source
-rails new testapp -T -d=postgresql -m ./template.rb
+rails new testapp --skip-turbolinks --skip-test --skip-sprockets -d=postgresql -m ./template.rb
 
 # setup and development server
 cd testapp
 bin/setup
 
 # run tests
-bundle exec rspec -f d
+# bundle exec rspec -f d
 
 # spin up dev server at http://localhost:5000
 foreman start -f Procfile.dev

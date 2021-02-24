@@ -8,13 +8,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <%= stylesheet_pack_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-
-  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
 </head>
 
-<body class="font-sans min-h-screen bg-gray-300">
+<body class="font-sans">
+
 <header>
   <%= render 'layouts/messages' %>
   <div class="h-64 bg-gray-700">
@@ -31,16 +30,17 @@
 <footer>
   <div class="max-w-5xl mx-auto flex items-center justify-between px-4">
     <p class="text-center pt-4">&copy;Copyright 2020<%= "-#{Date.current.year}" if Date.current.year > 2020 %></p>
-    <% if signed_in? %>
-      <%= link_to 'Sign out', sign_out_path, method: :delete, class: 'link link-gray' %>
+    <% if user_signed_in? %>
+      <%= link_to 'Sign out', destroy_user_session_path, method: :delete, class: 'link link-gray' %>
     <% else %>
-      <% if current_page?(sign_in_path) %>
+      <% if current_page?(new_user_session_path) %>
         <%= link_to 'Back to Home Page', root_path, class: 'link link-gray' %>
       <% else %>
-        <%= link_to 'Sign In', sign_in_path, class: 'link link-gray' %>
+        <%= link_to 'Sign In', new_user_session_path, class: 'link link-gray' %>
       <% end %>
     <% end %>
   </div>
 </footer>
+
 </body>
 </html>

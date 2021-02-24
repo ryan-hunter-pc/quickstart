@@ -12,52 +12,9 @@ def add_gems
   replace_file 'templates/Gemfile', 'Gemfile'
 end
 
-def add_gems_old
-  global_gems_to_add = <<~RUBY
-    gem 'colorize'
-    gem 'simple_form'
-    gem 'clearance'
-    gem 'high_voltage', '~> 3.1'
-    gem 'administrate'
-  RUBY
-  insert_into_file 'Gemfile', "\n\n#{global_gems_to_add.chomp}", after: /^(.+)bootsnap(.+)$/
-
-  dev_test_gems_to_add = <<-RUBY
-  gem 'rails-controller-testing'
-  gem 'rspec-rails', '~> 3.8'
-  gem 'dotenv-rails'
-  gem 'factory_bot_rails'
-  gem 'pry-byebug'
-  gem 'pry-rails'
-  gem 'pry-stack_explorer'
-  gem 'timecop'
-  RUBY
-  gsub_file 'Gemfile', /^(.+)gem(.+)byebug(.+)$/, dev_test_gems_to_add.chomp
-
-  test_gems_group = <<~RUBY
-    group :test do
-      gem 'capybara'
-      gem 'chromedriver-helper'
-      gem 'database_cleaner'
-      gem 'selenium-webdriver'
-      gem 'shoulda-matchers'
-      gem 'simplecov', require: false
-    end
-  RUBY
-  insert_into_file 'Gemfile', "\n\n#{test_gems_group.chomp}", after: /^(.+)timecop(.+)$\s+end/
-
-  dev_gems_to_add = <<-RUBY
-  gem 'guard-rspec', require: false
-  gem 'rails_real_favicon'
-  gem 'spring-commands-rspec'
-  gem 'terminal-notifier-guard', require: false
-  RUBY
-  insert_into_file 'Gemfile', "\n#{dev_gems_to_add.chomp}", after: /^(.+)spring-watcher-listen(.+)$/
-end
-
-def create_database
-  system "bundle exec rails db:create db:migrate"
-end
+#==============================================================================
+# Setup app
+#------------------------------------------------------------------------------
 
 def initialize_git_repository
   git :init
@@ -66,12 +23,16 @@ def initialize_git_repository
 end
 
 def update_setup_script
-  gsub_file 'bin/setup', "# system('bin/yarn')", "system('yarn')"
+  gsub_file 'bin/setup', "# system('bin/yarn')", "system!('yarn')"
   gsub_file 'bin/setup', "system! 'bin/rails db:prepare'", "system! 'bundle exec rails db:prepare'"
   comment_lines 'bin/setup', /Restarting application server/
   comment_lines 'bin/setup', /rails restart/
   git add: '.'
   git commit: %Q{ -m "Update setup script" }
+end
+
+def create_database
+  system "bundle exec rails db:prepare"
 end
 
 def copy_example_readme
@@ -83,6 +44,7 @@ end
 def copy_procfiles
   copy_file 'templates/Procfile', 'Procfile'
   copy_file 'templates/Procfile.dev', 'Procfile.dev'
+  copy_file 'templates/.foreman', '.foreman'
   git add: '.'
   git commit: %Q{ -m "Setup Procfiles for development (Procfile.dev) and production (Procfile)" }
 end
@@ -93,6 +55,7 @@ end
 #------------------------------------------------------------------------------
 
 def setup_test_suite
+  announce "Installing Test Suite"
   system "bundle exec rails g rspec:install"
   copy_spec_folder
   copy_guardfile
@@ -119,81 +82,115 @@ end
 
 
 #==============================================================================
-# Setup Heroku Apps
+# UI Toolkit
 #------------------------------------------------------------------------------
 
-def setup_heroku_apps
-  return unless yes?('Would you like to create Heroku staging and production applications now?')
-  heroku_app_name = ask('What should we name the Heroku apps? e.g. my-app')
-
-  # TODO: create the Heroku apps
-
-  # Add heroku remotes to the setup script
-  heroku_setup_block = <<-RUBY
-    if system 'heroku'
-      puts "\n== Setting Heroku remotes =="
-      system "heroku git:remote -a #{heroku_app_name}-staging -r staging"
-      system "heroku git:remote -a #{heroku_app_name}-production -r production"
-    end
-  RUBY
-
-  insert_into_file "bin/setup", "\n#{heroku_setup_block}", after: "system!('bundle install')\n"
+def install_ui_toolkit
+  integrate_css_via_webpacker
+  integrate_images_via_webpacker
+  install_tailwind_css
+  install_postcss_nesting
+  install_fontawesome
+  setup_view_helpers
 end
 
-def install_ui_toolkit
-  install_tailwind_css
-  install_fontawesome
-  integrate_stylesheets_via_webpacker
+def integrate_css_via_webpacker
+  announce "Installing CSS and PostCSS via Webpacker"
+
+  # mostly following https://dev.to/andrewmcodes/webpacker-6-tutorial-setup-281k
+  system 'yarn add file-loader css-loader style-loader mini-css-extract-plugin css-minimizer-webpack-plugin'
+  system 'yarn add postcss-loader postcss@latest autoprefixer@latest postcss-import@latest'
+  copy_file 'templates/postcss.config.js', 'postcss.config.js'
+  replace_file 'config/webpack/base.js'
+
+  insert_into_file 'app/packs/entrypoints/application.js',
+                   "\n// Stylesheets\nimport 'stylesheets/application.css'\n"
+  insert_into_file 'app/views/layouts/application.html.erb',
+                   "    <%= stylesheet_pack_tag 'application' %>\n",
+                   after: /^(.+)stylesheet_link_tag(.+)$/
+  directory 'app/packs/stylesheets'
+
   git add: '.'
-  git commit: %Q{ -m "Setup custom UI kit using Tailwind CSS and FontAwesome 5 via Webpacker" }
+  git commit: %Q{ -m "Integrate CSS and PostCSS loader for webpacker" }
+end
+
+def integrate_images_via_webpacker
+  announce "Integrating image assets via webpacker"
+  copy_file 'app/packs/images/skier.png'
+  # uncomment the lines which enable images via webpacker
+  gsub_file 'app/packs/entrypoints/application.js',
+            "// const images = require.context('../images', true)",
+            "const images = require.context('../images', true)"
+  gsub_file 'app/packs/entrypoints/application.js',
+            "// const imagePath = (name) => images(name, true)",
+            "const imagePath = (name) => images(name, true)"
+  git add: '.'
+  git commit: %Q{ -m "Integrate image support for webpacker" }
 end
 
 def install_tailwind_css
-  system 'yarn add tailwindcss'
-  # system './node_modules/.bin/tailwind init app/javascript/stylesheets/tailwind.js'
+  announce "Installing Tailwind CSS"
+  system 'yarn add tailwindcss @tailwindcss/forms'
+  system 'yarn tailwind init'
   insert_into_file 'postcss.config.js',
-                   "    require('tailwindcss'),\n    require('autoprefixer'),\n",
-                   before: /^(.+)postcss-import(.+)$/
+  "    require('tailwindcss'),\n",
+  before: /^(.+)require(.+)autoprefixer(.+)$/
+
+  git add: '.'
+  git commit: %Q{ -m "Install Tailwind CSS" }
+end
+
+def install_postcss_nesting
+  announce "Installing PostCSS Nesting"
+  system 'yarn add postcss-nesting'
+  insert_into_file 'postcss.config.js',
+                   "    require('postcss-nesting'),\n",
+                   before: /^(.+)require(.+)autoprefixer(.+)$/
+  git add: '.'
+  git commit: %Q{ -m "Install postcss-nesting to allow nested CSS" }
 end
 
 def install_fontawesome
+  announce "Installing FontAwesome"
   system 'yarn add @fortawesome/fontawesome-free'
   copy_file 'app/helpers/font_awesome_helper.rb'
-end
-
-def integrate_stylesheets_via_webpacker
-  insert_into_file 'app/javascript/packs/application.js',
-                   "\n// Stylesheets\n",
-                   after: "import \"controllers\"\n"
-  insert_into_file 'app/javascript/packs/application.js',
-                   "import 'stylesheets/application'\n",
-                   after: "// Stylesheets\n"
-  insert_into_file 'app/views/layouts/application.html.erb',
-                   "    <%= stylesheet_pack_tag 'application' %>\n\n",
-                   before: /^(.+)stylesheet_link_tag(.+)$/
-  directory 'app/javascript/stylesheets'
-end
-
-def add_visitor_root
-  copy_file 'app/controllers/marketing_controller.rb'
-  copy_file 'app/views/marketing/index.html.erb'
+  insert_into_file 'app/packs/entrypoints/application.js',
+                   "\n\nimport '@fortawesome/fontawesome-free/js/all'",
+                   after: /^import.+regenerator.+runtime.+$/
   git add: '.'
-  git commit: %Q{ -m "Setup root route to verify application configuration" }
+  git commit: %Q{ -m "Install FontAwesome and add a view helper to use it" }
 end
 
-def install_stimulus
-  system "rails webpacker:install:stimulus"
+def setup_view_helpers
+  copy_file 'app/helpers/button_helper.rb'
+end
 
-  # fix asset compression issue with StimulusJS on Heroku
-  gsub_file 'config/environments/production.rb',
-            'config.assets.js_compressor = :uglifier',
-            'config.assets.js_compressor = Uglifier.new(harmony: true)'
+#==============================================================================
+# Hotwire
+#------------------------------------------------------------------------------
+
+def install_hotwire
+  announce "Installing Hotwire"
+  system 'bundle exec rails hotwire:install'
+
+  # Use Turbo instead of Turbolinks
+  # gsub_file 'app/packs/entrypoints/application.js',
+  #           'import Turbolinks from "turbolinks"',
+  #           "import { Turbo } from \"@hotwired/turbo-rails\"\nwindow.Turbo = Turbo"
+  # gsub_file 'app/packs/entrypoints/application.js',
+  #           'Turbolinks.start()',
+  #           ''
 
   git add: '.'
-  git commit: %Q{ -m "Install StimulusJS" }
+  git commit: %Q{ -m "Install Hotwire-rails" }
 end
+
+#==============================================================================
+# Forms
+#------------------------------------------------------------------------------
 
 def install_simple_form
+  announce "Installing Simple Form"
   system "bundle exec rails g simple_form:install"
 
   # configure SimpleForm to use our custom Tailwind CSS components
@@ -203,114 +200,81 @@ def install_simple_form
   git commit: %Q{ -m "Install SimpleForm and configure it to use our Tailwind form styles" }
 end
 
+def integrate_choices_js
+  system "yarn add choices.js"
+  # integrate via StimulusJS
+  copy_file 'app/packs/controllers/choices_controller.js'
+  copy_file 'app/inputs/choices_input.rb'
+  git add: '.'
+  git commit: %Q{ -m "Install and integrate choices.js to handle rich select inputs" }
+end
+
 
 #==============================================================================
-# Configure Authentication
+# Configuration (authentication, layouts, environment config, etc.)
 #------------------------------------------------------------------------------
-
-def configure_authentication
-  install_clearance
-  copy_authentication_views
-  git add: '.'
-  git commit: %Q{ -m "Implement basic user authentication using Clearance" }
-end
-
-def install_clearance
-  announce 'Installing Clearance'
-  system "bundle exec rails generate clearance:install"
-  system "bundle exec rails db:migrate"
-  # no need to generate routes -- they are included manually in a custom `config/routes.rb` file
-  # system "bundle exec rails generate clearance:routes"
-  replace_file 'app/controllers/application_controller.rb'
-  copy_file 'app/controllers/passwords_controller.rb'
-  copy_file 'app/controllers/sessions_controller.rb'
-  copy_file 'app/controllers/users_controller.rb'
-  replace_file 'config/initializers/clearance.rb'
-end
-
-def copy_authentication_views
-  copy_file 'app/helpers/navigation_helper.rb'
-  replace_file 'app/views/layouts/application.html.erb'
-  copy_file 'app/views/layouts/authentication.html.erb'
-  directory 'app/views/layouts/authentication'
-  copy_file 'app/views/layouts/_messages.html.erb'
-  copy_file 'app/views/layouts/_top_navigation.html.erb'
-  copy_file 'app/views/layouts/_sidebar_navigation.html.erb'
-  copy_file 'app/javascript/controllers/sidebar_controller.js'
-  copy_file 'app/helpers/button_helper.rb'
-  directory 'app/views/sessions'
-  directory 'app/views/users'
-  directory 'app/views/passwords'
-  directory 'app/views/clearance_mailer'
-end
 
 def copy_configuration_files
   replace_file 'config/routes.rb'
   replace_file 'config/environments/development.rb'
   replace_file 'config/environments/test.rb'
   copy_file 'templates/.env', '.env'
+  replace_file 'config/initializers/dotenv.rb'
+  replace_file 'config/initializers/colorize.rb'
   git add: '.'
   git commit: %Q{ -m "Update application configuration" }
 end
 
-def extract_marketing_layout
-  copy_file 'app/views/layouts/marketing.html.erb'
+def configure_authentication
+  announce "Installing Authentication using Devise"
+
+  # Install Devise
+  generate "devise:install"
+
+  # Copy views into our app so we can customize
+  generate "devise:views"
+
+  # Create Devise User
+  generate :devise, "User",
+           "first_name",
+           "last_name",
+           "admin:boolean"
+
+  # Set admin default to false
+  in_root do
+    migration = Dir.glob("db/migrate/*").max_by{ |f| File.mtime(f) }
+    gsub_file migration, /:admin/, ":admin, default: false"
+  end
+
+  gsub_file "config/initializers/devise.rb",
+    /  # config.secret_key = .+/,
+    "  config.secret_key = Rails.application.credentials.secret_key_base"
+
+  # Add Devise omniauthable and masqueradable to users
+  inject_into_file("app/models/user.rb", "masqueradable, :", after: "devise :")
+
+  git add: '.'
+  git commit: %Q{ -m "Implement user authentication using Devise" }
+end
+
+def configure_navigation
+  replace_file 'app/controllers/application_controller.rb'
+  copy_file 'app/controllers/marketing_controller.rb'
   copy_file 'app/controllers/dashboards_controller.rb'
+  directory 'app/views/marketing'
   directory 'app/views/dashboards'
-  git add: '.'
-  git commit: %Q{ -m "Give marketing pages their own layout" }
-end
+  directory 'app/views/layouts', force: true
+  copy_file 'app/packs/controllers/sidebar_controller.js'
+  copy_file 'app/helpers/navigation_helper.rb'
 
-def configure_static_pages
-  directory 'app/views/pages'
-  copy_file 'config/initializers/high_voltage.rb'
-  copy_file 'app/controllers/pages_controller.rb'
-  # this also depends on custom routes defined in `config/routes.rb`
   git add: '.'
-  git commit: %Q{ -m "Use HighVoltage for easy static pages using the marketing layout" }
-end
-
-def install_administrate
-  system "bundle exec rails generate administrate:install"
-  # copy our custom overriding admin layout
-  replace_file 'app/controllers/admin/application_controller.rb'
-  directory 'app/views/layouts/admin'
-  directory 'app/views/admin/application'
-  directory 'app/views/fields'
-  replace_file 'app/dashboards/user_dashboard.rb'
-  git add: '.'
-  git commit: %Q{ -m "Install Administrate as an admin dashboard framework" }
-end
-
-def integrate_selectize
-  # install jQuery and expose as global module(s)
-  system "yarn add jquery"
-  replace_file 'config/webpack/environment.js'
-  # install selectize via yarn/webpacker
-  system "yarn add selectize"
-  insert_into_file 'app/javascript/packs/application.js',
-                   "import 'selectize/dist/js/selectize.js'\n",
-                   after: "// Javascript Dependencies\n"
-  # integrate selectize via StimulusJS
-  copy_file 'app/javascript/controllers/selectize_controller.js'
-  git add: '.'
-  git commit: %Q{ -m "Install and integrate selectize to handle rich select inputs" }
-end
-
-def integrate_choices_js
-  system "yarn add choices.js"
-  # integrate via StimulusJS
-  copy_file 'app/javascript/controllers/choices_controller.js'
-  copy_file 'app/inputs/choices_input.rb'
-  git add: '.'
-  git commit: %Q{ -m "Install and integrate choices.js to handle rich select inputs" }
+  git commit: %Q{ -m "Setup basic navigation between marketing and application layouts" }
 end
 
 def copy_gitignore
   replace_file 'templates/.gitignore', '.gitignore'
   git add: '.'
-  git commit: %Q{ -m "Ignore RSpec examples file and jetbrains config files" }
-
+  git commit: %Q{ -m "Update .gitignore" }
 end
 
 def announce(announcement)
@@ -331,22 +295,34 @@ add_template_repository_to_source_path
 add_gems
 
 after_bundle do
-  create_database
+  # App
   initialize_git_repository
-  copy_procfiles
-  setup_test_suite
   update_setup_script
+  create_database
+  copy_procfiles
   copy_example_readme
-  # setup_heroku_apps # FIXME: need to finish this method before uncommenting
-  install_stimulus
+
+  # Test suite
+  setup_test_suite
+
+  # UI/JS/Forms
   install_ui_toolkit
-  add_visitor_root
+  install_hotwire
   install_simple_form
-  configure_authentication
-  copy_configuration_files
-  extract_marketing_layout
-  configure_static_pages
-  install_administrate
   integrate_choices_js
+
+  # Configuration/Auth/Admin
+  copy_configuration_files
+  configure_authentication
+  configure_navigation
   copy_gitignore
+
+  say
+  say "Quickstart app successfully created!", :blue
+  say
+  say "To get started with your new app:", :green
+  say "  cd #{app_name}"
+  say "  rails db:prepare"
+  say "  gem install foreman"
+  say "  foreman start"
 end

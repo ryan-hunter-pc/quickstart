@@ -2,13 +2,13 @@ module NavigationHelper
   def navbar_link_to(text, path, **options)
     classes = [options.delete(:class), 'navbar-link']
     options[:class] = classes.compact.join(' ')
-    nav_link_to text, path, options
+    nav_link_to text, path, **options
   end
 
   def sidebar_link_to(text, path, **options)
     classes = [options.delete(:class), 'sidebar-link']
     options[:class] = classes.compact.join(' ')
-    nav_link_to text, path, options
+    nav_link_to text, path, **options
   end
 
   def nav_link_to(text, path, **options)
@@ -16,6 +16,6 @@ module NavigationHelper
     classes = [options.delete(:class)]
     classes << 'active' if current_page?(path)
     options[:class] = classes.compact.join(' ')
-    link_to text, path, options
+    link_to text, path, **options
   end
 end
