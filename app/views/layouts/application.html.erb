@@ -8,10 +8,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <%= stylesheet_pack_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-
-  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_pack_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= javascript_pack_tag 'application', 'data-turbo-track': 'reload' %>
 </head>
 
 <body class="font-sans">
@@ -19,19 +17,19 @@
 <div id="wrapper"
      class="loading flex h-screen w-screen"
      data-controller="sidebar"
-     data-target="sidebar.screenWrapper"
+     data-sidebar-target="screenWrapper"
      data-sidebar-show="<%= true %>">
 
   <div id="sidebar-wrapper"
        class="z-40 flex-none h-full shadow-lg lg:shadow-none bg-gray-300"
-       data-target="sidebar.sidebarWrapper">
+       data-sidebar-target="sidebarWrapper">
     <%= render 'layouts/sidebar_navigation' %>
   </div>
 
   <div id="body-wrapper" class="flex-1">
     <header><%= render 'layouts/top_navigation' %></header>
 
-    <main id="main-wrapper" role="main" data-target="sidebar.mainWrapper">
+    <main id="main-wrapper" role="main" data-sidebar-target="mainWrapper">
       <header class="flex items-center bg-gray-300 py-3 px-1 md:px-4">
         <div class="flex-1"><%= content_for :left_menu %></div>
 

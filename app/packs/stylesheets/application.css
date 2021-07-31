@@ -1,0 +1,24 @@
+/*=========================================================================
+ Choices.js Theme
+=========================================================================*/
+@import 'choices.js/public/assets/styles/choices';
+
+/*=========================================================================
+// Theme (Tailwind CSS + custom components, etc)
+=========================================================================*/
+/* Core Tailwind CSS */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+
+/* Custom components/styles (edit these to change "theme") */
+@import "components/_badges";
+@import "components/_buttons";
+@import "components/_forms";
+@import "components/_links";
+@import "components/_navigation";
+
+@import "tailwindcss/utilities";
+
+/* Load custom utilities here, e.g. */
+/* @import "utilities/background-patterns"; */
+/* @import "utilities/skew-transforms"; */
