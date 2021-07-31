@@ -264,7 +264,7 @@ def configure_navigation
   directory 'app/views/marketing'
   directory 'app/views/dashboards'
   directory 'app/views/layouts', force: true
-  copy_file 'app/packs/controllers/sidebar_controller.js'
+  # copy_file 'app/packs/controllers/sidebar_controller.js'
   copy_file 'app/helpers/navigation_helper.rb'
 
   git add: '.'
@@ -305,13 +305,13 @@ after_bundle do
   # Test suite
   setup_test_suite
 
-  # UI/JS/Forms
+  # UI, JS, Forms
   install_ui_toolkit
-  install_hotwire
-  install_simple_form
-  integrate_choices_js
+  # install_hotwire
+  # install_simple_form
+  # integrate_choices_js
 
-  # Configuration/Auth/Admin
+  # Configuration, Auth, Admin
   copy_configuration_files
   configure_authentication
   configure_navigation
