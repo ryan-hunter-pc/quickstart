@@ -24,7 +24,7 @@ end
 
 def update_setup_script
   gsub_file 'bin/setup', "# system('bin/yarn')", "system!('yarn')"
-  gsub_file 'bin/setup', "system! 'bin/rails db:prepare'", "system! 'bundle exec rails db:prepare'"
+  gsub_file 'bin/setup', "bin/rails", "bundle exec rails"
   comment_lines 'bin/setup', /Restarting application server/
   comment_lines 'bin/setup', /rails restart/
   git add: '.'
@@ -85,13 +85,10 @@ end
 # UI Toolkit
 #------------------------------------------------------------------------------
 
-def install_ui_toolkit
-  integrate_css_via_webpacker
-  integrate_images_via_webpacker
-  install_tailwind_css
-  install_postcss_nesting
-  install_fontawesome
-  setup_view_helpers
+def merge_javascript_folder_into_packs
+  directory 'app/packs/entrypoints', force: true
+  directory 'app/packs/channels'
+  remove_dir 'app/javascript/'
 end
 
 def integrate_css_via_webpacker
@@ -153,62 +150,12 @@ end
 def install_fontawesome
   announce "Installing FontAwesome"
   system 'yarn add @fortawesome/fontawesome-free'
-  copy_file 'app/helpers/font_awesome_helper.rb'
   insert_into_file 'app/packs/entrypoints/application.js',
                    "\n\nimport '@fortawesome/fontawesome-free/js/all'",
                    after: /^import.+regenerator.+runtime.+$/
   git add: '.'
-  git commit: %Q{ -m "Install FontAwesome and add a view helper to use it" }
+  git commit: %Q{ -m "Install FontAwesome" }
 end
-
-def setup_view_helpers
-  copy_file 'app/helpers/button_helper.rb'
-end
-
-#==============================================================================
-# Hotwire
-#------------------------------------------------------------------------------
-
-def install_hotwire
-  announce "Installing Hotwire"
-  system 'bundle exec rails hotwire:install'
-
-  # Use Turbo instead of Turbolinks
-  # gsub_file 'app/packs/entrypoints/application.js',
-  #           'import Turbolinks from "turbolinks"',
-  #           "import { Turbo } from \"@hotwired/turbo-rails\"\nwindow.Turbo = Turbo"
-  # gsub_file 'app/packs/entrypoints/application.js',
-  #           'Turbolinks.start()',
-  #           ''
-
-  git add: '.'
-  git commit: %Q{ -m "Install Hotwire-rails" }
-end
-
-#==============================================================================
-# Forms
-#------------------------------------------------------------------------------
-
-def install_simple_form
-  announce "Installing Simple Form"
-  system "bundle exec rails g simple_form:install"
-
-  # configure SimpleForm to use our custom Tailwind CSS components
-  replace_file 'config/initializers/simple_form.rb'
-
-  git add: '.'
-  git commit: %Q{ -m "Install SimpleForm and configure it to use our Tailwind form styles" }
-end
-
-def integrate_choices_js
-  system "yarn add choices.js"
-  # integrate via StimulusJS
-  copy_file 'app/packs/controllers/choices_controller.js'
-  copy_file 'app/inputs/choices_input.rb'
-  git add: '.'
-  git commit: %Q{ -m "Install and integrate choices.js to handle rich select inputs" }
-end
-
 
 #==============================================================================
 # Configuration (authentication, layouts, environment config, etc.)
@@ -257,18 +204,16 @@ def configure_authentication
   git commit: %Q{ -m "Implement user authentication using Devise" }
 end
 
-def configure_navigation
+def configure_layout
   replace_file 'app/controllers/application_controller.rb'
   copy_file 'app/controllers/marketing_controller.rb'
   copy_file 'app/controllers/dashboards_controller.rb'
+  directory 'app/views/layouts', force: true
   directory 'app/views/marketing'
   directory 'app/views/dashboards'
-  directory 'app/views/layouts', force: true
-  # copy_file 'app/packs/controllers/sidebar_controller.js'
-  copy_file 'app/helpers/navigation_helper.rb'
 
   git add: '.'
-  git commit: %Q{ -m "Setup basic navigation between marketing and application layouts" }
+  git commit: %Q{ -m "Setup initial application layout and controllers" }
 end
 
 def copy_gitignore
@@ -276,6 +221,10 @@ def copy_gitignore
   git add: '.'
   git commit: %Q{ -m "Update .gitignore" }
 end
+
+#==============================================================================
+# Utilities for this template file
+#------------------------------------------------------------------------------
 
 def announce(announcement)
   puts "\n#{'=' * 76}\n#{announcement}\n#{'-' * 76}"
@@ -305,16 +254,18 @@ after_bundle do
   # Test suite
   setup_test_suite
 
-  # UI, JS, Forms
-  install_ui_toolkit
-  # install_hotwire
-  # install_simple_form
-  # integrate_choices_js
+  # UI Toolkit
+  merge_javascript_folder_into_packs
+  integrate_css_via_webpacker
+  integrate_images_via_webpacker
+  install_tailwind_css
+  install_postcss_nesting
+  install_fontawesome
 
   # Configuration, Auth, Admin
   copy_configuration_files
   configure_authentication
-  configure_navigation
+  configure_layout
   copy_gitignore
 
   say

@@ -58,9 +58,6 @@ Rails.application.configure do
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
 
-  # Authenticate faster in feature specs
-  config.middleware.use Clearance::BackDoor
-
   # Allow clearance to "send" emails in tests
   config.action_mailer.default_url_options = { host: 'localhost:5000' }
 
