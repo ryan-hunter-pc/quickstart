@@ -1,7 +1,3 @@
 :root {
-  --navbar-height: 50px;
-  --mobile-sidebar-width: 100%;
-  --sidebar-width: 200px;
-
   --fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 }

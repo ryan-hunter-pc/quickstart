@@ -1,13 +1,13 @@
-<section class="text-center">
+<section class="text-center mt-8">
   <h2 class="text-2xl">Welcome to the RH Productions Quickstart App</h2>
 
   <p class="mt-4">If the button below is blue, that means Tailwind CSS is working.</p>
   <p class="mt-2">If it includes a hand icon, that means FontAwesome is working.</p>
 
   <button class="btn btn-primary mt-4 mb-2">
-    <%= fa_icon 'hand-point-up', text: 'Press Me' %>
+    <span><i class="fas fa-hand-point-up mr-2"></i>Press Me</span>
   </button>
 
   <p class="mt-2">If there is a skier image below, that means images via webpacker are working.</p>
-  <%= image_pack_tag 'media/images/skier.png', class: 'mx-auto h-24 w-24' %>
+  <%= image_pack_tag 'media/images/skier.png', class: 'mt-4 mx-auto h-24 w-24' %>
 </section>

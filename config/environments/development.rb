@@ -34,8 +34,8 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   # ActionMailer Config
-  # use MailCatcher -- start with `mailcatcher` in shell, then visit http://127.0.0.1:1080/ to see inbox
-  config.action_mailer.delivery_method = :smtp
+  # use MailHog -- install with `brew update && brew install mailhog`, start with `mailhog`, see output for inbox URL
+  config.action_mailer.delivery_method = :smt
   config.action_mailer.smtp_settings = { :address => "localhost", :port => 1025 }
   # Allow mailers to create full URLs (to the correct environment) in emails
   config.action_mailer.default_url_options = { host: ENV['DOMAIN'] }

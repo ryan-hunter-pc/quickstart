@@ -1,22 +1,7 @@
-<%= content_for :title, 'Dashboard' %>
-
-<section id="dashboard" class="">
+<section id="dashboard">
   <div class="mx-auto md:max-w-xl">
     <div id="welcome-card" class="mt-8 bg-white shadow-lg rounded mx-2">
-      <p class="text-lg text-center p-4">Welcome to Quickstart</p>
-
-      <div class="buttons py-4 px-4">
-        <%= link_to fa_icon('chevron-right', text: 'Get Started', icon_class: 'fa-fw'),
-                    '#',
-                    class: 'btn btn-lg btn-primary block w-full mt-2' %>
-        <%= link_to fa_icon('users-cog', text: 'Manage Users', icon_class: 'fa-fw'),
-                    admin_users_path,
-                    class: 'btn btn-lg btn-gray block w-full mt-2' %>
-        <%= link_to fa_icon('sign-out-alt', text: 'Sign Out', icon_class: 'fa-fw'),
-                    sign_out_path,
-                    method: :delete,
-                    class: 'btn btn-lg btn-gray block w-full mt-2' %>
-      </div>
+      <p class="text-lg text-center p-4">Quickstart Dashboard</p>
     </div>
   </div>
 </section>

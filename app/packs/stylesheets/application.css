@@ -1,9 +1,4 @@
 /*=========================================================================
- Choices.js Theme
-=========================================================================*/
-@import 'choices.js/public/assets/styles/choices';
-
-/*=========================================================================
 // Theme (Tailwind CSS + custom components, etc)
 =========================================================================*/
 /* Core Tailwind CSS */
@@ -15,7 +10,6 @@
 @import "components/_buttons";
 @import "components/_forms";
 @import "components/_links";
-@import "components/_navigation";
 
 @import "tailwindcss/utilities";
 
