@@ -14,15 +14,9 @@
 const images = require.context('../images', true)
 const imagePath = (name) => images(name, true)
 
-import 'core-js/stable'
-import 'regenerator-runtime/runtime'
-
-import Rails from "@rails/ujs"
-import * as ActiveStorage from "@rails/activestorage"
-import "channels"
-
-Rails.start()
-ActiveStorage.start()
+// Activate Active Storage
+// import * as ActiveStorage from "@rails/activestorage"
+// ActiveStorage.start()
 
 import '@fortawesome/fontawesome-free/js/all'
 

@@ -23,7 +23,6 @@ def initialize_git_repository
 end
 
 def update_setup_script
-  gsub_file 'bin/setup', "# system('bin/yarn')", "system!('yarn')"
   gsub_file 'bin/setup', "bin/rails", "bundle exec rails"
   comment_lines 'bin/setup', /Restarting application server/
   comment_lines 'bin/setup', /rails restart/
@@ -59,7 +58,6 @@ def setup_test_suite
   system "bundle exec rails g rspec:install"
   copy_spec_folder
   copy_guardfile
-  # disable_yarn_check_in_development
   git add: '.'
   git commit: %Q{ -m "Setup core TDD and debugging suite using RSpec, Capybara, Guard, and FactoryBot" }
 end
@@ -74,12 +72,6 @@ def copy_spec_folder
   directory 'spec'
 end
 
-def disable_yarn_check_in_development
-  gsub_file 'config/environments/development.rb',
-            "config.webpacker.check_yarn_integrity = true",
-            "config.webpacker.check_yarn_integrity = false"
-end
-
 
 #==============================================================================
 # UI Toolkit
@@ -87,7 +79,6 @@ end
 
 def merge_javascript_folder_into_packs
   directory 'app/packs/entrypoints', force: true
-  directory 'app/packs/channels'
   remove_dir 'app/javascript/'
 end
 
@@ -100,8 +91,8 @@ def integrate_css_via_webpacker
   copy_file 'templates/postcss.config.js', 'postcss.config.js'
   replace_file 'config/webpack/base.js'
 
-  insert_into_file 'app/packs/entrypoints/application.js',
-                   "\n// Stylesheets\nimport 'stylesheets/application.css'\n"
+  # insert_into_file 'app/packs/entrypoints/application.js',
+  #                  "\n// Stylesheets\nimport 'stylesheets/application.css'\n"
   insert_into_file 'app/views/layouts/application.html.erb',
                    "    <%= stylesheet_pack_tag 'application' %>\n",
                    after: /^(.+)stylesheet_link_tag(.+)$/
@@ -115,12 +106,12 @@ def integrate_images_via_webpacker
   announce "Integrating image assets via webpacker"
   copy_file 'app/packs/images/skier.png'
   # uncomment the lines which enable images via webpacker
-  gsub_file 'app/packs/entrypoints/application.js',
-            "// const images = require.context('../images', true)",
-            "const images = require.context('../images', true)"
-  gsub_file 'app/packs/entrypoints/application.js',
-            "// const imagePath = (name) => images(name, true)",
-            "const imagePath = (name) => images(name, true)"
+  # gsub_file 'app/packs/entrypoints/application.js',
+  #           "// const images = require.context('../images', true)",
+  #           "const images = require.context('../images', true)"
+  # gsub_file 'app/packs/entrypoints/application.js',
+  #           "// const imagePath = (name) => images(name, true)",
+  #           "const imagePath = (name) => images(name, true)"
   git add: '.'
   git commit: %Q{ -m "Integrate image support for webpacker" }
 end
@@ -150,9 +141,9 @@ end
 def install_fontawesome
   announce "Installing FontAwesome"
   system 'yarn add @fortawesome/fontawesome-free'
-  insert_into_file 'app/packs/entrypoints/application.js',
-                   "\n\nimport '@fortawesome/fontawesome-free/js/all'",
-                   after: /^import.+regenerator.+runtime.+$/
+  # insert_into_file 'app/packs/entrypoints/application.js',
+  #                  "\n\nimport '@fortawesome/fontawesome-free/js/all'",
+  #                  after: /^import.+regenerator.+runtime.+$/
   git add: '.'
   git commit: %Q{ -m "Install FontAwesome" }
 end
@@ -166,6 +157,7 @@ def copy_configuration_files
   replace_file 'config/environments/development.rb'
   replace_file 'config/environments/test.rb'
   copy_file 'templates/.env', '.env'
+  copy_file 'templates/.tool-versions', '.tool-versions'
   replace_file 'config/initializers/dotenv.rb'
   replace_file 'config/initializers/colorize.rb'
   git add: '.'
@@ -197,7 +189,7 @@ def configure_authentication
     /  # config.secret_key = .+/,
     "  config.secret_key = Rails.application.credentials.secret_key_base"
 
-  # Add Devise omniauthable and masqueradable to users
+  # Add Devise masqueradable to users
   inject_into_file("app/models/user.rb", "masqueradable, :", after: "devise :")
 
   git add: '.'
@@ -273,7 +265,7 @@ after_bundle do
   say
   say "To get started with your new app:", :green
   say "  cd #{app_name}"
-  say "  rails db:prepare"
+  say "  bin/setup"
   say "  gem install foreman"
   say "  foreman start"
 end
